@@ -1,2 +1,4 @@
-the1.pdf file contains the problem
-the1.c file contains my submission
+##the1.pdf
+Contains the problem
+##the1.c
+Contains my submission
