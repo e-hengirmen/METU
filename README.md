@@ -7,9 +7,8 @@ _Middle East Technical University CENG **Introduction to Computer Engineering Co
 
 **Instructor:** Göktürk Üçoluk
 ### Includes
-...
+
 * Take Home Exam submissions. (written in python 2.7)
-...
 ## [CENG 140](https://github.com/e-hengirmen/METU/tree/master/CENG140)
 _Middle East Technical University CENG **C Programming** course_
 
