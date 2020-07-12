@@ -1,0 +1,64 @@
+starting input11.txt
+	points for input11.txt:100.0
+
+starting input10.txt
+	points for input10.txt:100.0
+
+starting input15.txt
+	distance between probabilities are greater than 0.02 for of interval 9
+	distance between probabilities are greater than 0.02 for of interval 10
+	points for input15.txt:92.0
+
+starting input17.txt
+	points for input17.txt:100.0
+
+starting input8.txt
+	points for input8.txt:100.0
+
+starting input4.txt
+	points for input4.txt:100.0
+
+starting input3.txt
+	points for input3.txt:100.0
+
+starting input5.txt
+	points for input5.txt:100.0
+
+starting input12.txt
+	points for input12.txt:100.0
+
+starting input18.txt
+	points for input18.txt:100.0
+
+starting input2.txt
+	points for input2.txt:100.0
+
+starting input6.txt
+	points for input6.txt:100.0
+
+starting input9.txt
+	points for input9.txt:100.0
+
+starting input13.txt
+	points for input13.txt:100.0
+
+starting input14.txt
+	points for input14.txt:100.0
+
+starting input7.txt
+	points for input7.txt:100.0
+
+starting input1.txt
+	points for input1.txt:100.0
+
+starting input20.txt
+	points for input20.txt:100.0
+
+starting input16.txt
+	points for input16.txt:100.0
+
+starting input19.txt
+	points for input19.txt:100.0
+
+had problems in: ['input15.txt']
+Total points:99.6
