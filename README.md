@@ -1,5 +1,5 @@
 # [METU](https://www.metu.edu.tr/)
-Homeworks that are given to me while I was a student of [METU Computer Engineering Department](https://ceng.metu.edu.tr/).
+Homeworks that are given to me while I was a student of [Middle East Technical University Computer Engineering Department](https://ceng.metu.edu.tr/).
 ## [CENG 111](https://github.com/e-hengirmen/METU/tree/master/CENG111)
 _Middle East Technical University CENG **Introduction to Computer Engineering Concepts** course_
 
