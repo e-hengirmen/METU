@@ -1,4 +1,4 @@
-##the1.pdf
+## the1.pdf
 Contains the problem
-##the1.c
+## the1.c
 Contains my submission
