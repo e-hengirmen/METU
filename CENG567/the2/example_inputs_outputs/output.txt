@@ -1,0 +1,12 @@
+Frequencies:
+A: 10
+B: 5
+C: 3
+
+Codes:
+A: 0
+B: 10
+C: 11
+
+Total Size:
+26 bits

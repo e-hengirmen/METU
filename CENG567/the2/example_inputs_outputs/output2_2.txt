@@ -1,0 +1,14 @@
+Frequencies:
+AA: 2
+BB: 1
+AB: 3
+AC: 3
+
+Codes:
+AA: 00
+BB: 01
+AC: 10
+BA: 11
+
+Total Size:
+18 bits
