@@ -1,0 +1,2 @@
+from the2 import isCovered
+print isCovered((10,10),(20,20),(15,5),(17,12),(15,16),(17,24))
