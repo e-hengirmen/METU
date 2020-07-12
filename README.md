@@ -6,15 +6,17 @@ _Middle East Technical University CENG **Introduction to Computer Engineering Co
 **Term:** Fall 2019-2020
 
 **Instructor:** Göktürk Üçoluk
-### Contains
+### Includes
+'''
 * Take Home Exam submissions. (written in python 2.7)
+'''
 ## [CENG 140](https://github.com/e-hengirmen/METU/tree/master/CENG140)
 _Middle East Technical University CENG **C Programming** course_
 
 **Term:** Spring 2019-2020
 
 **Instructor:** Göktürk Üçoluk
-### Contains
+### Includes
 * Take Home Exam submissions. (written in C)
 ## [CENG 567](https://github.com/e-hengirmen/METU/tree/master/CENG567)
 _Middle East Technical University CENG **Design and Analysis of Algorithms** course_
@@ -22,5 +24,5 @@ _Middle East Technical University CENG **Design and Analysis of Algorithms** cou
 **Term:** Spring 2019-2020
 
 **Instructor:** Ismail Hakki Toroslu
-### Contains
+### Includes
 * Take Home Exam submissions. (written in C++)
