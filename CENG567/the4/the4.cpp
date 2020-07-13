@@ -28,11 +28,10 @@ double solve(double *arr,int x,int y,int n,int *control){
     }
     /*
     x to y 
-    x to i ye + i to y ye recursive
+    x to i + i to y in recursive
+
+    100 symbolises no edge so
     if arr[x][i] is 100 than there is no edge
-    
-    
-    
     */
     
     
