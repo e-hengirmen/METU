@@ -22,6 +22,6 @@ _Middle East Technical University CENG **Design and Analysis of Algorithms** cou
 
 **Term:** Spring 2019-2020
 
-**Instructor:** Ismail Hakki Toroslu
+**Instructor:** Ismail Hakkı Toroslu
 ### Includes
 * Take Home Exam submissions. (written in C++)
