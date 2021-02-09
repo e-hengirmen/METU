@@ -1,0 +1,341 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage[hmargin=3cm,vmargin=6.0cm]{geometry}
+%\topmargin=0cm
+\topmargin=-2cm
+\addtolength{\textheight}{6.5cm}
+\addtolength{\textwidth}{2.0cm}
+%\setlength{\leftmargin}{-5cm}
+\setlength{\oddsidemargin}{0.0cm}
+\setlength{\evensidemargin}{0.0cm}
+
+% symbol commands for the curious
+\newcommand{\setZp}{\mathbb{Z}^+}
+\newcommand{\setR}{\mathbb{R}}
+\newcommand{\calT}{\mathcal{T}}
+
+\begin{document}
+
+\section*{Student Information } 
+%Write your full name and id number between the colon and newline
+%Put one empty space character after colon and before newline
+Full Name :  Ersel Hengirmen\\
+Id Number :  2468015\\
+
+% Write your answers below the section tags
+\section*{Answer 1}
+I have $2$ formulas that I will prove before I start:\\ \\
+Theorem $1$:\\
+for A,B$\in$U (U is the universal set)\\
+if A$\subseteq$B than\\
+A$\cap B=A$  (proof is below)
+\begin{table}[H]
+    \begin{tabular}{p{1.4cm}lclll}	
+    &$A\cap B$ & $=$ & $\{x | x\in A\land x\in B\}$ \\
+    & &$=$&$\{x | x\in A\land (x\in B-A\lor x\in A)\}$ \\
+    & &$=$&$\{x | (x\in A\land x\in B-A)\lor(x\in A\land x\in A)\}$ \\
+    & &$=$&$\{x | F\lor x\in A\}$ \\
+    & &$=$&$\{x | x\in A\}=A$ \\
+    \end{tabular}
+\end{table}
+
+Theorem $2$:\\
+for A,B,C$\in$U (U is the universal set)\\
+if A$\subseteq$B and $A\cup C=B$ than\\
+A$\cup B=B$  (proof is below)
+\begin{table}[H]
+    \begin{tabular}{p{1.4cm}lclll}	
+    &$A\cup B$ & $=$ & $\{x | x\in A\lor x\in B\}$ \\
+    & &$=$&$\{x | x\in A\lor (x\in C\lor x\in A)\}$ \\
+    & &$=$&$\{x | x\in A\lor x\in A\lor x\in C\}$ \\
+    & &$=$&$\{x | x\in A\lor x\in C\}$ \\
+    & &$=$&$\{x | x\in B\}=B$ \\
+    \end{tabular}
+\end{table}
+
+
+\paragraph{a.}
+i)Is a topology since:$A\cup\emptyset=A$ $and$ $A\cap\emptyset=\emptyset$ and $A,\emptyset\in T_1$\\
+ii) Is not a topology since: ${a}\cup{b}=\{a,b\}$ and $\{a,b\}\notin T_2$\\
+iii) Is a topology since:\\
+First of all everyting in $T_1$ is a subset of A so for any B$\in T_3$ $A\cup B$ will be A and $A\cap B$ will be B acording to theorems $1$ and $2$ above so we dont need to care about it from now on since every one of these will give out something thats already in $T_3$\\
+everything else is subset of \{a,b,c\} so we dont need to care about it either\\
+and for any B$\in T_3$ $\emptyset\cup B$ will be B and $\emptyset\cap B$ will be $\emptyset$ according to theorems $1$ and $2$ since $\emptyset$ is a subset of everything so we dont need to care about it from now on either since every one of these will give out something thats already in $T_3$\\
+\{b\} is also subset of everyting thats remaining so we dont have to care about that either\\
+which means we only have \{a,b\} and \{b,c\} lets check them out:\\
+$\{a,b\}\cap\{b,c\}=\{b\}$ is already inside $T_3$\\
+$\{a,b\}\cup\{b,c\}=\{a,b,c\}$ is already inside $T_3$\\
+so we can safely say it is a totology
+
+iv) Is not a topology since: $\{b\}\cup\{a,c\}=\{a,b,c\}$ and $\{a,b,c\}\notin T_4$\\
+\paragraph{b.\\}
+i) We will solve this one case by case
+\begin{itemize}
+\item Case1) A is finite:
+\subitem A-$\emptyset$=A and A-A=$\emptyset$ which are finite.
+\subitem since every subset of A is finite and finite-finite is always finite
+\subitem every subset of A will also be in $T_1$
+\subitem and because of that rules i,ii,iii will always be true for this set so
+\subitem this case is valid
+\item Case2) A is infinite
+\subitem since A is infinite and since A-U must be infinite U must be finite because infinite-U can only be finite for U's that are infinite
+\subitem Since all U's are infinite(other than $\emptyset$: We can't use rule iii for this part so we will only look at validity of rules i and ii.
+\subitem $A\in T_1\rightarrow A-A=\emptyset$ and $\emptyset$ is finite 
+\subitem $\emptyset\in T_1\rightarrow A-\emptyset=A$ and A
+\subitem so rule i holds
+\subitem lets choose 2 sets $U_1,U_2$ satisfying $A-U_1,A-U_2$ is finite
+\subitem We cant use rule iii since they are infinite but we have to apply rule ii for this
+\subitem We know that by applying rule ii the $T_1$ will include the set $U_1\cup U_2$ so A-($U_1\cup U_2$) must be finite for this to be a topology
+\subitem lets check if that is the case:
+\subitem let B be $A-U_1$,let C be $A-U_2$
+\subitem $A-(U_1\cup U_2)=(A-U_1)\cap(A-U_2)=B\cap C$
+\subitem since B and C must be finite and cardinality of $B\cap C$ must be lower than both B and C (or equal to one of them)
+\subitem $B\cap C$ must be finite
+\subitem for every item of $T_1$ rule ii is valid
+\subitem since rule i,ii are both valid and rule iii can not be applied this $T_1$ is a topology
+
+\end{itemize}
+\textbf{For this part I will apply a theorem from our textbook.}\\
+\textbf{Textbook chapter 2.5 Theorem 1 states(page 174):}\\
+\textbf{If A and B are countable sets, then A$\cup$B is also countable.}\\
+ii) We will solve this one case by case
+\begin{itemize}
+\item Case 1) A is countable:
+\subitem A-$\emptyset$=A and A-A=$\emptyset$ which are countable.
+\subitem since A is countable every subset of A is countable and countable-countable (since its cardinality must be lower then the first countable set) is always countable
+\subitem Because of that this case is valid
+
+\item Case 2) A is uncountable:
+\subitem since A is uncountable and since A-U must be countable U must be uncountable since uncountable-countable will always be uncountable all U's can only be uncountable
+\subitem Since all U's are uncountable it must be also infinite. Because of that we can't use rule iii for this part. So we will only look at validity of rules i and ii.
+\subitem $A\in T_2\rightarrow A-A=\emptyset$ and $\emptyset$ is countable 
+\subitem $\emptyset\in T_2\rightarrow A-\emptyset=A$
+\subitem so rule i holds
+
+\subitem lets choose 2 sets $U_1,U_2$ satisfying $A-U_1,A-U_2$ is countable
+\subitem We cant use rule iii since they are infinite but we have to apply rule ii for this
+\subitem We know that by applying rule ii we will get a new set which will be $U_1\cup U_2$ so A-($U_1\cup U_2$) must be countable for this to be a topology
+\subitem lets check if that is the case:
+\subitem let B be $A-U_1$,let C be $A-U_2$
+\subitem $A-(U_1\cup U_2)=(A-U_1)\cap(A-U_2)=B\cap C$
+
+\subitem since B and C must be countable and cardinality of $B\cap C$ must be lower than both B and C
+
+\subitem for every item of $T_2$ rule ii is valid
+\subitem since rule i,ii are both valid and rule iii can not be applied this $T_2$ is a topology
+
+\end{itemize}
+
+iii)I will show you that it is not a topology with an example:\\
+choose A=N (N is the set of natural numbers)\\
+N-\{number\} is infinite for any number.\\
+because of that we will put every one number set (\{0\},\{1\},\{2\},....) inside $T_3$\\
+since unions of these elements will be every subset of A (other than $\emptyset$) every subset of N must be inside $T_3$\\
+because of that N-\{1\} is also going to be inside $T_3$\\
+N-\{N-\{1\}\}=\{1\} and since \{1\} is not infinite\\
+$T_3$ is not a topology.
+
+\section*{Answer 2}
+\paragraph{a.It is injective:\\ }
+let (x,y),(a,b) be any (x,y),(a,b)$\in$Ax(0,1) satisfying f(x,y)=f(a,b) \\
+by definition of f we have x+y=a+b\\
+we can see x-a=b-y\\
+since x and a are integers x-a should always be an integer\\
+so we see that b-y is also an integer\\
+since $0<$b,y$<1$ we can see that range of (b-y) is $-1<$b-y$<1$ and there is only one integer in this domain\\
+so we can see that b-y=0 and since x-a=b-y, x-a is also equal to 0\\
+x-a=0 $\rightarrow$ x=a and b-y=0 $\rightarrow$ b=y \\
+therefore (x,y)=(a,b) so we can conclude that f is injective.
+
+\paragraph{b.f is not surjective\\}
+let x$\in$A and y$\in$(0,1)\\
+Now I will show you there is no f(x,y)=0\\
+according to their definition x$\leq$0 and 0$<$y$<$1\\
+so 0$<$x+y and since f(x,y)=x+y\\
+f(x,y) is always higher than 0 so f(x,y) is not surjective since codomain of the fucntion contains 0 
+\paragraph{c.}
+\textbf{Textbook chapter 2.5 Definition 1 states (page 170)}:\\
+\textbf{If there is a one-to-one function from A to B, the cardinality of A is less than or the same as the cardinality of B and we write $|A| \leq |B|$. Moreover, when $|A| \leq |B|$ and A and B have
+different cardinality, we say that the cardinality of A is less than the cardinality of B and we
+write $|A| < |B|$.}\\
+I will use this definition on this question.\\
+\\
+If there exists an injective g function from $[0,\infty)$ to $A\times(0, 1)$ we can say that $|A\times(0, 1)|\geq|[0,\infty)|$
+and we know that f(x,y)=x+y is an injective function from $A\times(0, 1)$ tto $[0,\infty)$ so we can say that $|[0,\infty)|\geq|A\times(0, 1)|$\\
+so since both of these are true we can conclude that $|[0,\infty)|=|A\times(0, 1)|$\\
+\section*{Answer 3}
+for this question I will first prove that cartesian product of 2 countable set is also countable by:\\
+lets choose 2 infinitely countable sets A=$\{a_1,a_2,...\}$ and B=$\{b_1,b_2,...\}$:\\
+the created matrix will be like:\\
+$(a_1,b_1),(a_1,b_2),(a_1,b_3)...$\\
+$(a_2,b_1),(a_2,b_2),(a_2,b_3)...$\\
+$(a_3,b_1),(a_3,b_2),(a_3,b_3)...$\\
+...\\
+...\\
+now if we count by the method that was introduced by our textbook(\textbf{Textbook chapter 2.5 example 4 (page 172-173) proof of positive rational numbers are countable})\\
+which is: Instead of counting by line or counting by column we are counting diagonally first we will count diagonally from bottom left to top right ($\nearrow$) of the first diagonal line(first diagonal line only contains $(a_1b_1)$) we will get to next diagonal line and count from top right to bottom left ($\swarrow$) (we will do it interchangingly forever).\\
+for above matrix this counting method will result in counting in a way like below:\\
+$(a_1,b_1),(a_1,b_2),(a_2,b_1),(a_3,b_1),(a_2,b_2),(a_1,b_3),(a_1,b_4)......$\\
+This is the proof that cartesian product of countably infinite sets are also countable.
+
+\paragraph{a. countable:}
+
+By definition A=$Z^{+}\times Z^{+}$. So since $Z^{+}$ (positive integers) are countable the cartesian product of two countable sets is also countable, so we can see that A is countable.
+\paragraph{b. countable:}
+for any f as a function $f:\{1,....,n\}\rightarrow Z^{+}$\\
+As it was on part a B is cartesian product of n number of $Z^{+}$ and since $Z^{+}$ is countable and cartesian products of n sets which is B is also countable
+\paragraph{c. NOT countable:}
+We will use the diagonilization method cantor used to solve this question:\\
+We have set f functions below which are ordered in the form:\\
+$f_a$,$f_b$,$f_c$ and so on.\\
+And elements of a function are ordered on below order (i is arbitrary):\\ 
+$f_i(1)=i1$,$f_i(2)=i2$ and so on (every $i_j$ (j is an arbitrary positive integer) is a positive integer)\\
+You can see the visualized set below:\\
+$f_a$=\{\textbf{a1},a2,a3,a4,.........\}\\
+$f_b$=\{b1,\textbf{b2},b3,b4,.........\}\\
+$f_c$=\{c1,c2,\textbf{c3},c4,.........\}\\
+...\\
+...\\
+...\\
+We first assume the above set is countable. by only changing a diagonal row(changing a1 from $f_a$,changing b2 from $f_b$ and so on) we can get a function that is not in this set since at least one of its members will be different from every other function inside our set. And since this function that should be inside our list, but it is proved that it is not inside our list we find a contradiction. So by proof by contradiction we say that this set is \textbf{not countable}.\\
+\\
+by the way since answer of part D is not countable and D is a subset of C, C is not countable\\
+\paragraph{d. NOT countable:}
+We will use the diagonilization method cantor used to solve this question:\\
+We have sett f functions below which are ordered from:\\
+$f_a$,$f_b$,$f_c$ and so on.\\
+And elements of a function are ordered on below order (i is arbitrary):\\ 
+$f_i(1)=i1$,$f_i(2)=i2$ and so on (every $i_j$ (j is an arbitrary positive integer) is either 1 or 0)\\
+You can see the visualized set below:\\
+$f_a$=\{\textbf{a1},a2,a3,a4,.........\}\\
+$f_b$=\{b1,\textbf{b2},b3,b4,.........\}\\
+$f_c$=\{c1,c2,\textbf{c3},c4,.........\}\\
+...\\
+...\\
+...\\
+We first assume the above set is countable. by only changing a diagonal row(changing a1 from $f_a$,changing b2 from $f_b$ and so on) we can get a function that is not in this set since at least one of its members will be different from every other function inside our set. And since this function that should be inside our list, but it is proved that it is not inside our list we find a contradiction. So by proof by contradiction we say that this set is \textbf{not countable}.\\ \\
+Unimportant note: every element of every function is either 1 or 0 so when we change the diagonal row we are changing 1's to 0's and 0's to 1's.
+
+\paragraph{e.countable:} 
+question says that:\\
+A function is said to be eventually zero if there is a $N \in Z^{+}$ such that $f(n) = 0$ for all $n \geq N$.\\
+According to question definition we can define f as:\\
+\begin{equation}
+   f(x)= 
+    \begin{cases}
+        g(x) & \text{if $x\in\{1,2,...,n-1\}$} \\
+        0 & \text{if $x\notin\{1,2,...,n-1\}\land x\in Z^{+}$} \\
+    \end{cases}
+\end{equation}
+Now I will show all of these f functions are countable\\
+To do this lets choose a surjective f function from $Z^{+}$ to $\{0,1\}$ called $f_a$ which is:\\ 
+\begin{equation}
+   f_a(x)= 
+    \begin{cases}
+        1 & \text{if $x=1$} \\
+        0 & \text{if $x\neq 1\land x\in Z^{+}$} \\
+    \end{cases}
+\end{equation}
+since we have a surjective function as you can see from above like that by definition of surjectiveness we can see that $|f_a|\leq|Z^{+}|$\\
+since $Z^{+}$ is countable by definition, f functions are also countable.\\
+since g(x) has N-1 elements(that are either 1 or 0) there are only $2^{N-1}$ different g functions and because of that there are only $2^{N-1}$ f functions. So there are finite number of f functions that are countable therefore E ((E has the same cardinality as $Z^{+}$. because $|Z^{+}|=|Z^{+}\times Z^{+}|$ and $|Z^{+}|\leq |E|\leq|Z^{+}\times Z^{+}|$)) (Because of the same reason as f) is \textbf{Countable}.\\
+
+
+
+
+
+\section*{Answer 4}
+\paragraph{a.}
+by Stirling’s approximation $n!\approx n^{n}*e^{-n}*(2\pi n)^{0.5}$\\
+\[ \lim_{n\to\infty} n!/n^{n} \]	\\
+\[ =\lim_{n\to\infty} \dfrac{n^{n}*e^{-n}*(2\pi n)^{0.5}}{n^{n}} \] \\
+\[ =(\lim_{n\to\infty} \dfrac{(2\pi n)^{0.5}}{e^{n}})\dfrac{\infty}{\infty} using L'hospital\]  \\ 
+\[ =\lim_{n\to\infty} \dfrac{0.5*(2\pi )^{0.5}}{e^{n}*n^{0.5}}=0 \]\\
+since their limit division is 0 there can not be a c and  (c,j are integer) that satisfies after n$>$k where c*n!$>n^{n}$ so we can safely say that n! is not $n^{n}$
+
+\paragraph{b.}
+\textbf{Textbook chapter 3.2 theorem 4 states(page 216)}:\\
+\textbf{Let $f (x) = a_n x^{n} + a_{n-1} x^{n-1} + $···$ + a_1 x + a_0$ , where $a_0 , a_1 , $···$ , a_n$ are real numbers with $a_n\neq 0$. Then f(x) is of order $x{n}$ .}\\
+\\
+we will use it for this theorem for this question.\\
+we will look at it case by case:\\
+CASE 1) $b>0$:\\
+$(n + a)^{b}=n^{b}+a_2*n^{b-1}...+a_n^{b}$ ($a_1$ is 1)  \\
+since highest order is $n^{b}$ so this is \\
+\[ \lim_{n\to\infty} n^{b}/n^{b}=\lim_{n\to\infty} 1/1=1 \]	\\
+since their limit division is not 0 nor $\infty$, $(n+a)^{b}$ is $\theta(n^{b})$ for this case\\
+Or \\
+\[ \lim_{n\to\infty} \dfrac{n^{b}+a_2*n^{b-1}...+a_n^{b}}{n^{b}}\]	\\
+\[ =\lim_{n\to\infty} \dfrac{\dfrac{n^{b}}{n^{b}}+\dfrac{a_2*n^{b-1}}{n^{b}}...+\dfrac{a_n^{b}}{n^{b}}}{\dfrac{n^{b}}{n^{b}}}= \]	\\
+\[ \lim_{n\to\infty} \dfrac{1+0+0...0}{1}=1/1=1\]	\\
+since their limit division is not 0 nor $\infty$, $(n+a)^{b}$ is $\theta(n^{b})$ for this case\\
+
+
+CASE 2) $b=0$:\\
+$(n + a)^{b}=1$ since $n^{0}=1$ this case is also valid\\
+\[ \lim_{n\to\infty} 1/1=1 \]	\\
+since their limit division is not 0 nor $\infty$, $(n+a)^{b}$ is $\theta(n^{b})$ for this case too
+So we can can conclude that $(n+a)^{b}$ is $\theta(n^{b})$\\
+
+
+
+\section*{Answer 5}
+\paragraph{a.}
+We will solve it by proving every case:
+\begin{itemize}
+\item $x<y$:
+\subitem $(2^{x}-1)$ mod $(2^{y}-1)=(2^{x}-1)$  (lhs equation)
+\subitem x mod y=x (for the rhs equation's exponentiation)
+\subitem so rhs of the equation becaomes $2^{x}-1$
+\subitem $(2^{x}-1)=(2^{x}-1)$ so for $x<y$ it is valid
+
+\item $x=y$:
+\subitem $(2^{x}-1)$ mod $(2^{y}-1)=0$  (lhs equation)
+\subitem x mod y=0 (for the rhs equation's exponentiation)
+\subitem so rhs of the equation becaomes $2^{0}-1=1-1=0$
+\subitem $0=0$ so for $x=y$ it is valid
+
+\item $x>y$: (if y > x just change their values gcd is commutative)
+\subitem by the definition of divisibility we can say that we will choose $a,b\in$ N (N is natural numbers set) satisfying $b<y$ and x=a*y+b
+\subitem (Note: by modulo definition b=x mod y)
+\subitem $(2^{x}-1)$ mod $(2^{y}-1)=((2^{x}-1)-2^{x-y}*(2^{y}-1)) $ mod $(2^{y}-1)=((2^{x}-1)-(2^{x}-2^{x-y}))$ mod $(2^{y}-1)=(2^{x-y}-1)$ mod $(2^{y}-1)$  (lhs equation)
+\subitem from the upper part we can say that: $(2^{x}-1)$ mod $(2^{y}-1)=(2^{x-y}-1))$ mod $(2^{y}-1)=(2^{(a.y+b)-y}-1))$ mod $(2^{y}-1)=(2^{(a-1)*y+b}-1))$ mod $(2^{y}-1)$
+\subitem by applying above part a times we see that lhs equation becomes: $(2^{x}-1)$ mod $(2^{y}-1)=2^{(a-a)*y+b}-1=2^{b}-1$ (lhs equation)
+\subitem x mod y=(a*y+b) mod y=b (for the rhs equation's exponentiation)
+\subitem so rhs of the equation becomes $2^{b}-1$
+\subitem $2^{b}-1=2^{b}-1$ so for $x>y$ it is valid
+\item we can see that it is valid for every case
+\end{itemize}
+
+
+
+
+\paragraph{b.}
+We will solve it by proving every case:
+\begin{itemize}
+\item case 1)$x=y$:
+\subitem $gcd(2^{x}-1,2^{x}-1)=2^{x}-1$ (lhs)
+\subitem $2^{gcd(x,x)}-1=2^{x}-1$ (rhs)
+\subitem since rhs=lhs equation is valid for $x=y$
+
+\item case 2)$x\neq y$ 
+\subitem For this part we will use Euclidean algorithm to help us calculate gcd
+\subitem Euclidean algorithm works by taking the modulo of the bigger number by smaller number and changing bigger number with the result until the smaller number becomes 0. The remaining number other than 0 is the gcd of the 2 numbers
+\subitem This is possible because gcd(a,b)=gcd(a,b mod a)
+\subitem from the last question we know that $(2^{x}-1)mod(2^{y}-1)=2^{(x)mod(y)}-1$
+\subitem I will call this equation: Eq1
+\subitem from now on we will use a as the lower number and b as the higher number 
+\subitem by Euclidean method: $gcd(2^{a}-1,2^{b}-1)=gcd(2^{a}-1,(2^{b}-1)$ mod $(2^{a}-1))$
+\subitem by Eq1: $gcd(2^{a}-1,(2^{b}-1)$ mod $(2^{a}-1))=gcd(2^{a}-1,2^{(b)mod(a)}-1)$
+\subitem By applying above steps we have applied the first step of the Euclidean algorithm on exponents 
+\subitem and proved that gcd of both parts are same
+\subitem These steps will be applied until one of the exponentials becomes 0 (this is because Euclidean algorithm goes until one part is 0 and $2^{x}-1=0$ only when x=0)
+\subitem and since what we are doing is essentially taking gcd of exponent we can conclude that equation is valid
+\end{itemize}
+
+
+\end{document}

@@ -1,0 +1,230 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage[hmargin=3cm,vmargin=6.0cm]{geometry}
+%\topmargin=0cm
+\topmargin=-2cm
+\addtolength{\textheight}{6.5cm}
+\addtolength{\textwidth}{2.0cm}
+%\setlength{\leftmargin}{-5cm}
+\setlength{\oddsidemargin}{0.0cm}
+\setlength{\evensidemargin}{0.0cm}
+
+% symbol commands for the curious
+\newcommand{\setZp}{\mathbb{Z}^+}
+\newcommand{\setR}{\mathbb{R}}
+\newcommand{\calT}{\mathcal{T}}
+
+\begin{document}
+
+\section*{Student Information } 
+%Write your full name and id number between the colon and newline
+%Put one empty space character after colon and before newline
+Full Name : Ersel Hengirmen  \\
+Id Number : 2468015 \\
+
+% Write your answers below the section tags
+\section*{Answer 1}
+We will first choose the planets and the star then order them.\\
+First we have 10 stars and we need to pick only one so 10 comes from there.\\
+we have 20 habitable planets and we need to choose 2 from them with: $\binom{20}{2}$\\
+we have 80 non-habitable planets and we need to choose 8 from them with: $\binom{80}{8}$\\
+now we have chosen our planets and we can choose:\\
+10*$\binom{20}{2}*\binom{80}{8}$ different combinations\\
+\\
+Now before we start ordering them by planet types before ordering them by individual planets\\
+lets calculate how many ways we can order habitable planets:\\
+Important Note:\textbf{My indexes will be from 0 to 10. O will always show the star.}\\
+We will order them by distance to our star.\\
+The question wants us that there must be at least 6 non-habitable planets between habitable ones\\
+that means there are at least 6 at most 8 (1+8+1=10) lets calculate each case:\\
+\\
+if there are 6 spaces between them habitable planets will be at 3 different positions:\\
+1 8\\
+2 9\\
+3 10\\
+if there are 7 spaces between them habitable planets will be at 2 different positions:\\
+1 9\\
+2 10\\
+if there are 8 spaces between them habitable planets will be at 1 different positions:\\
+1 10\\
+so there are $(3+2+1)=6$ ways for planets to be ordered by type\\
+and we can simply calculate their in-group order by 8! and 2!:\\
+so at the end we have:\\
+10*$\binom{20}{2}*\binom{80}{8}*6*8!*2!=$\\
+$10*(20*19)/2!*(80*79*78*77*76*75*74*73)/8!*6*8!*2!=$\\
+$10*(20*19)*(80*79*78*77*76*75*74*73)*6=\textbf{26648126951846400000}$\\
+\\
+\\
+\\
+\textbf{Second Solution}:\\
+from top part we know that there are 6 different ways to order non-habitable and habitable planets.\\
+we have 10 stars so we will just use permutation:\\
+1. non-habitable:80 choices\\
+2. non-habitable:79 choices\\
+3. non-habitable:78 choices\\
+4. non-habitable:77 choices\\
+5. non-habitable:76 choices\\
+6. non-habitable:75 choices\\
+7. non-habitable:74 choices\\
+8. non-habitable:73 choices\\
+1. habitable:20 choices\\
+2. habitable:19 choices\\
+$10*(20*19)*(80*79*78*77*76*75*74*73)*6=\textbf{26648126951846400000}$\\
+
+\section*{Answer 2}
+$a_n=a_n^{h}+a_n^{p}$\\
+\\
+$a_n = 2a_{n-1} + 15a_{n-2} - 36a_{n-3} + 2^{n}$\\
+$a_n - 2a_{n-1} - 15a_{n-2} + 36a_{n-3}=2^{n}$  \\
+lets first find homogenous solution:\\
+$a_n - 2a_{n-1} - 15a_{n-2} + 36a_{n-3}=0$    homogenous form\\
+$r^{3}-2r^{2}-15r-36=0$\\
+$(r-3)^{2}*(r+4)=0$\\
+$r_{1,2}=3$\\
+$r_{3}=-4$\\
+$a_n^{h}=(A*n+B)*3^{n}+C*(-4)^n$\\
+
+lets now find the particular solution:\\
+since solution is of the form $2^{n}$ we will choose particular solution of the form $a_n^{p}=D*2^{n}$\\
+$D*2^{n}-2D*2^{n-1}-15D*2^{n-2}+36D*2^{n-3}=2^{n}$\\
+$D*2^{n-3}(8-8-30+36)=2^{n}$\\
+$D*(6)=8$\\
+$D=4/3$\\
+so\\
+$a_n^{p}=2^{n+2}/3$\\
+\\
+since $a_n=a_n^{h}+a_n^{p}$\\
+$a_n=(A*n+B)*3^{n}+C*(-4)^n+2^{n+2}/3$\\
+
+
+
+
+
+
+
+\section*{Answer 3}
+Well first of all we need to find our base $a_1$:\\
+since there must be odd number of odd digits if this string has\\
+only one number then it must be odd and since there are only 5 odd numbers\\
+$a_1=5$\\
+now lets find recurrence relation:\\
+now to create an n length code we can do 2 things:\\
+\\
+1-Take a before generated password of length n-1 and add an even number to it\\
+so that our number of odd numbers will remain odd.\\
+In this case we will have $a_{n-1}*5$ passwords that has n length.
+\\
+2-Now take a n-1 lengthed digit string thats not an acceptable password\\
+since its not acceptable it will have even number of odd numbers\\
+which means we will need to add an odd number at the end of it to create a password\\
+so since the total number of digit strings that has n-1 length is $10^{n-1}$\\
+and $a_{n-1}$ of them have odd number of odd digits.\\
+For this case we will have $(10^{n-1}-a_{n-1})*5$ passwords that has n length\\
+\\
+$a_{n}=a_{n-1}*5+(10^{n-1}-a_{n-1})*5=10^{n-1}*5$\\
+$a_{n}=10^{n-1}*5$\\
+$a_{n-1}=10^{n-2}*5$\\
+$10*a_{n-1}=10^{n-1}*5$\\
+So our recurrance relation is:\\
+$a_{n}=10*a_{n-1}$\\
+With initial condition: $a_{0}=5$
+
+\section*{Answer 4}
+ Our recurrence relation says: $a_{k} = 3a_{k-1} -3a_{k-2} +a_{k-3}$\\
+$a_0=1$\\
+$a_1=3$\\
+$a_2=6$\\
+above conditions are our premises\\
+First of all let $F(x)=\sum_{n=0}^{\infty}a_{n}x^{n}$\\
+since k-3 is there we can show our recurrence relation as:
+$a_{n} = 3a_{n-1} -3a_{n-2} +a_{n-3}$ for n$\geq$3\\
+now we will replace above formula with below one\\
+\\
+$\sum_{n=3}^{\infty}a_{n}x^{n}=3\sum_{n=3}^{\infty}a_{n-1}x^{n}-3\sum_{n=3}^{\infty}a_{n-2}x^{n}+\sum_{n=3}^{\infty}a_{n-3}x^{n}$\\
+\\
+
+Now we will first create left hand side of this equation:\\
+since summation starts from n=3 it does not include 0,1 and 2\\
+Because of that left hand side of the equation is:\\
+$F(x)-a_{0}-a_{1}x-a_{2}x^{2}=F(x)-1-3x-6x^{2}$\\
+
+Now we will create right hand side of this equation:\\
+\\
+$=3x\sum_{n=3}^{\infty}a_{n-1}x^{n-1}-3x^{2}\sum_{n=3}^{\infty}a_{n-2}x^{n-2}+x^{3}\sum_{n=3}^{\infty}a_{n-3}x^{n-3}$\\
+\\
+$\sum_{n=3}^{\infty}a_{n-1}x^{n-1}$ has elements from 2 to infinity and does not contain $a_{0}$ and $a_{1}$\\
+$\sum_{n=3}^{\infty}a_{n-2}x^{n-2}$ has elements from 1 to infinity and does not contain $a_{0}$\\
+$\sum_{n=3}^{\infty}a_{n-3}x^{n-3}$ has elements from 0 to infinity\\
+because of that rhs of the equation is equal to:\\
+\\
+$=3x(F(x)-a_{0}-a_{1}x)-3x^{2}(F(x)-a_{0})+x^{3}F(x)$\\
+$=3x(F(x)-1-3x)-3x^{2}(F(x)-1)+x^{3}F(x)$\\
+$=F(x)(x^{3}-3x^{2}+3x)-6x^{2}-3x$\\
+\\
+$=F(x)(x^{3}-3x^{2}+3x)-6x^{2}-3x$\\
+lets merge rhs with lhs:\\
+$F(x)-1-3x-6x^{2}=F(x)(x^{3}-3x^{2}+3x)-6x^{2}-3x$\\
+$F(x)(x^{3}-3x^{2}+3x-1)=-1$\\
+$F(x)=-1/(x^{3}-3x^{2}+3x-1)$\\
+$F(x)=-1/(x-1)^3$\\
+$F(x)=1/(1-x)^3$\\
+\\
+We will use:
+$\sum_{n=0}^{\infty}x^{n}=1/(1-x)\leftrightarrow$(1,1,1,1,1,...) lets take its derivative 2 times to create something similar to what we need\\
+
+$1/(1-x)^{2}\leftrightarrow$(1,2,3,4,...,n+1,...)    first derivative\\
+$2/(1-x)^{3}\leftrightarrow$(2,6,12,20,...,(n+1)*(n+2),...)    second derivative\\
+and after this by dividing to 2 we get:\\
+$F(x)=1/(1-x)^{3}\leftrightarrow$(1,3,6,10,...,(n+1)*(n+2)/2,...)
+which means:\\
+$a_n=(n+1)*(n+2)/2$\\
+
+
+
+
+\section*{Answer 5}
+\paragraph{a.}
+By its definition R is an equavilance relation if it is transitive, symmetric and reflexive\\
+The question tels us that ((a, b),(c, d))$\in$R if and
+only if a+d=b+c\\
+\\
+1-lets see if it is reflexive:\\
+for it to be reflexive ((a,b),(a,b)) must be in R\\
+since a+b=b+a it is reflexive\\
+\\
+2-lets see if it is symmetric:\\
+By the definition of symmetricity if ((a, b),(c, d))$\in$R than ((c, d),(a, b))$\in$R\\
+lets assume ((a, b),(c, d))$\in$R that means:a+d=b+c\\
+and since a+d=b+c holds, c+b=a+d must also hold(since they are the same thing)\\
+which means:\\
+(((a, b),(c, d))$\in$R)$\rightarrow$(((c, d),(a, b))$\in$R)\\
+and because of that R is symmetric\\
+\\
+3-lets see if it is transitive:\\
+By the definition of transitive: 
+if ((a, b),(c, d))$\in$R and ((c, d),(e, f))$\in$R\\
+than ((a, b),(e, f))$\in$R must hold\\
+Let ((a, b),(c, d)),((c, d),(e, f))$\in$R\\
+that means a+d=b+c and c+f=d+e\\
+now we need to probe a+f=b+e\\
+we know that a+d=b+c and c+f=d+e so:\\
+(a+d)+(c+f)=(b+c)+(d+e)\\
+a+d+c+f=b+c+d+e now lets extract c+d from both sides\\
+a+d+c+f-(c+d)=b+c+d+e-(c+d)\\
+a+f=b+e\\
+which means:\\
+((((a, b),(c, d))$\in$R)$\land$(((a, b),(c, d))$\in$R))$\rightarrow$(((a, b),(e, f))$\in$R)\\
+
+and because of that R is transitive\\
+\\
+Since R is transitive, symmetric and reflexive R is an equivalence relation
+
+\paragraph{b.}
+By the description of R, ((a,b),(1,2))$\in$R is only possible if a+2=b+1 which means b=a+1\\
+That means Equavilance class of (1,2) with respect to R is: \{(a,a+1):$\in Z^{+}$\}\\
+
+\end{document}

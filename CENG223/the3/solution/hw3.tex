@@ -1,0 +1,174 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[dvips]{graphicx}
+\usepackage{epsfig}
+\usepackage{fancybox}
+\usepackage{verbatim}
+\usepackage{array}
+\usepackage{latexsym}
+\usepackage{alltt}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\usepackage[hmargin=3cm,vmargin=5.0cm]{geometry}
+\topmargin=-1.8cm
+\addtolength{\textheight}{6.5cm}
+\addtolength{\textwidth}{2.0cm}
+\setlength{\oddsidemargin}{0.0cm}
+\setlength{\evensidemargin}{0.0cm}
+
+\newcommand{\HRule}{\rule{\linewidth}{1mm}}
+\newcommand{\kutu}[2]{\framebox[#1mm]{\rule[-2mm]{0mm}{#2mm}}}
+\newcommand{\gap}{ \\[1mm] }
+
+\newcommand{\Q}{\raisebox{1.7pt}{$\scriptstyle\bigcirc$}}
+
+\lstset{
+    %backgroundcolor=\color{lbcolor},
+    tabsize=2,
+    language=C++,
+    basicstyle=\footnotesize,
+    numberstyle=\footnotesize,
+    aboveskip={0.0\baselineskip},
+    belowskip={0.0\baselineskip},
+    columns=fixed,
+    showstringspaces=false,
+    breaklines=true,
+    prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+    %frame=single,
+    showtabs=false,
+    showspaces=false,
+    showstringspaces=false,
+    identifierstyle=\ttfamily,
+    keywordstyle=\color[rgb]{0,0,1},
+    commentstyle=\color[rgb]{0.133,0.545,0.133},
+    stringstyle=\color[rgb]{0.627,0.126,0.941},
+}
+
+
+\begin{document}
+
+
+
+\noindent
+\HRule \\[3mm]
+\small
+\begin{tabular}[b]{lp{3.8cm}r}
+{} Middle East Technical University &  &
+{} Department of Computer Engineering \\
+\end{tabular} \\
+\begin{center}
+
+                 \LARGE \textbf{CENG 223} \\[4mm]
+                 \Large Discrete Computational Structures \\[4mm]
+                \normalsize Fall '2020-2021 \\
+                    \Large Homework 3 \\
+                \normalsize Student Name and Surname: Ersel Hengirmen  \\
+                \normalsize Student Number: 2468015\\
+\end{center}
+\HRule
+
+
+\section*{Question 1}
+$(2^{22} + 4^{44} + 6^{66} + 8^{80} + 10^{110}) $mod $11 \equiv ?$\\
+Since 11 is prime and does not divide 2,4,6,8 and 10, by fermat's little theorem:\\
+$(2^{11-1})$mod $1\equiv 1$\\
+$(4^{11-1})$mod $11\equiv 1$\\
+$(6^{11-1})$mod $11\equiv 1$\\
+$(8^{11-1})$mod $11\equiv 1$\\
+$(10^{11-1})$mod $11\equiv 1$\\
+
+$(2^{22} + 4^{44} + 6^{66} + 8^{80} + 10^{110}) $mod $11 \\
+\equiv (2^{10*2+2} + 4^{10*4+4} + 6^{10*6+6} + 8^{10*8} + 10^{10*11}) $mod $11 $\\
+$\equiv (1^{2}*2^{2}+1^{4}*4^{4}+1^{6}*6^{6}+1^{8}+1^{11})$mod $11$\\
+$\equiv (4+256+46656+1+1)$mod $11\equiv (4+3+5+1+1)$mod $11\equiv (14)$mod $11$\\
+$\equiv 3$\\
+
+\section*{Question 2}
+
+\begin{center}
+\begin{tabular}{ c c c }
+& \textbf{gcd(5n+3,7n+4)} &\\ \cline{2-2}
+\textbf{Higher} &\textbf{Lower} &\textbf{Combination} \\ \cline{1-3}
+7n+4&    5n+3  &      7n+4=1*(5n+3)+(2n+1)\\
+5n+3 &   2n+1 &       5n+3=2*(2n+1)+(n+1)\\
+2n+1  &  n+1 &        2n+1=1*(n+1)+n\\
+n+1    & n  &         n+1=1*(n)+1\\
+n  &     1 &          n=n*(1)\\
+1   &    0&
+\end{tabular}
+\end{center}
+
+By Euclid's algorithm gcd(5n + 3, 7n + 4)=1\\
+
+\section*{Question 3}
+
+$m^{2}=n^{2}+kx$\\
+For this problem we know that m,n and k are integer numbers and x is a prime number.\\
+$m^{2}=n^{2}+kx$\\
+\\
+Now we will extract $n^{2}$ from both sides\\
+$m^{2}-n^{2}=kx$\\
+\\
+by the definition of divisibility $x|m^{2}-n^{2}$ is clear but to make it more clear\\
+since $m^{2}-n^{2}=(m+n)*(m-n)$ we can change the above equation to:\\
+$(m+n)*(m-n)=kx$\\
+\\
+Now we will divide every side by x:\\
+$\dfrac{(m+n)*(m-n)}{x}=k$\\
+\\
+We know that m and n are integers which means m+n and m-n must also be integers. \\
+we can easily see that $x|m^{2}-n^{2}$ since k is also an integer\\
+since x is prime it can not be written as multiplication of 2 prime or composite numbers\\
+because of that either m+n or m-n must be divisible to x(proof of this is below). Otherwise k wouldnt be and integer.\\
+
+Proof:\\
+Firstly dont forget x is prime.\\
+We will prove that if x$|$((m+n)(m-n)) than $(x|(m+n))\lor(x|(m-n))$\\ 
+suppose that gcd(x,(m+n))=1 (if its not then x divides (m+n) since x is prime and we proved $((x|(m+n))\lor(x|(m-n)))$\\
+By Bezout's Lemma there are integers a,b such that xa+(m+n)b=1\\
+xa+(m+n)b=1\\
+(m-n)xa+(m+n)(m-n)b=(m-n)\\
+(m-n)xa has x so it is divisible by x\\
+(m+n)(m-n)b has (m+n)(m-n) so it is divisible by x\\
+(m-n)=(m-n)xa+(m+n)(m-n)b both of them are divisible by x so (m-n) is divisible by x\\
+and my proof is complete\\
+
+\section*{Question 4}
+
+I will show that for all n such that n $\geq$ 1 the following is true:\\
+$1 + 4 + 7 + ...+ (3n-2) = \dfrac{n(3n-1)}{2}$\\
+Note: I will use P(k) as the validity of above equality for an arbitrary integer k$\geq$1
+\\
+\textbf{Base Step}:\\
+for n =1\\
+1=1*(3-1)/2=1\\
+so it is valid for our base case n=1\\
+\\
+\textbf{Inductive Step}: Assume that P(k) is valid for an arbitrary integer k$\leq$1 \\
+now we will prove 1+4+7...+(3k-2)+(3(k+1)-2)=$\dfrac{(k+1)(3(k+1)-1)}{2}$ is valid (P(k+1))i:\\
+\\
+1+4+7...+(3k-2)+(3(k+1)-2)\\
+=(1+4+7+.....(3k-2))+(3(k+1)-2)\\
+Since we assumed that P(k) is valid $(1+4+7+.....(3k-2))=\dfrac{k(3k-1)}{2}$ so using that\\
+\\
+$=\dfrac{k(3k-1)}{2}+3k+1$\\
+\\
+$=\dfrac{k(3k-1)+6k+2}{2}$\\
+\\
+$=\dfrac{k(3k-1)+(3k-1)+3*(k+1)}{2}$\\
+\\
+$=\dfrac{(k+1)(3k-1)+3*(k+1)}{2}$\\
+\\
+$=\dfrac{(k+1)(3k+2)}{2}$\\
+$=\dfrac{(k+1)(3(k+1)-1)}{2}$\\
+From these we saw that if P(k) is valid P(k+1) must also be valid\\
+This completes the inductive step\\
+\\
+By mathematical induction $1 + 4 + 7 + ...+ (3n-2) = \dfrac{n(3n-1)}{2}$ is true for all integers n$\geq$1
+
+
+\end{document}
+
