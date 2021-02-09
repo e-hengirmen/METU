@@ -25,11 +25,3 @@ _Middle East Technical University CENG **Design and Analysis of Algorithms** cou
 **Instructor:** İsmail Hakkı Toroslu
 ### Includes
 * Take Home Exam submissions. (written in C++)
-## [IE 407]	
-_Middle East Technical University IE **Fundamentals of Operational Research** course_
-
-**Term:** Fall 2020-2021
-
-**Instructor:** Sinan Gürel
-### Includes
-* Term Project Submission.
