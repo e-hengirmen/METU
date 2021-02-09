@@ -25,7 +25,7 @@ _Middle East Technical University CENG **Design and Analysis of Algorithms** cou
 **Instructor:** İsmail Hakkı Toroslu
 ### Includes
 * Take Home Exam submissions. (written in C++)
-## [IE 407](https://github.com/e-hengirmen/METU/tree/master/CENG223)
+## [CENG 223](https://github.com/e-hengirmen/METU/tree/master/CENG223)
 _Middle East Technical University IE **Discrete Computational Structures** course_
 
 **Term:** Fall 2020-2021
