@@ -26,7 +26,7 @@ _Middle East Technical University CENG **Design and Analysis of Algorithms** cou
 ### Includes
 * Take Home Exam submissions. (written in C++)
 ## [CENG 223](https://github.com/e-hengirmen/METU/tree/master/CENG223)
-_Middle East Technical University IE **Discrete Computational Structures** course_
+_Middle East Technical University CENG **Discrete Computational Structures** course_
 
 **Term:** Fall 2020-2021
 
