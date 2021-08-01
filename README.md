@@ -41,3 +41,36 @@ _Middle East Technical University IE **Fundamentals of Operational Research** co
 **Instructor:** Sinan Gürel
 ### Includes
 * Term Project submission. (written in latex avaliable in pdf)
+## [CENG 222](https://github.com/e-hengirmen/METU/tree/master/CENG222)
+_Middle East Technical University CENG **Statistical Methods for Computer Engineering** course_
+
+**Term:** Spring 2020-2021
+
+**Instructor:** Şeyda Ertekin
+### Includes
+* Take Home Exam submission. (written in latex avaliable in pdf)
+## [CENG 232](https://github.com/e-hengirmen/METU/tree/master/CENG232)
+_Middle East Technical University CENG **Logic Design** course_
+
+**Term:** Spring 2020-2021
+
+**Instructors:** Hande Alemdar, Ferda Nur Alparslan, Mehmet Volkan Atalay
+### Includes
+* Take Home Exam submission. (written in logisim and verilog)
+## [CENG 242](https://github.com/e-hengirmen/METU/tree/master/CENG242)
+_Middle East Technical University CENG **Programming Language Concepts** course_
+
+**Term:** Spring 2020-2021
+
+**Instructor:** İsmail Hakkı Toroslu
+### Includes
+* Take Home Exam submission. (written in Haskell, C++, Prolog)
+## [CENG 478](https://github.com/e-hengirmen/METU/tree/master/CENG478)
+_Middle East Technical University CENG **Introduction to Parallel Computing** course_
+
+**Term:** Spring 2020-2021
+
+**Instructor:** Murat Manguoğlu
+### Includes
+* Term Project Report submission. (written in latex avaliable in pdf)
+* Term Project Code submission. (written in C++)
