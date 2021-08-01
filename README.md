@@ -56,7 +56,7 @@ _Middle East Technical University CENG **Logic Design** course_
 
 **Instructors:** Hande Alemdar, Ferda Nur Alparslan, Mehmet Volkan Atalay
 ### Includes
-* Take Home Exam submission. (written in logisim and verilog)
+* Lab submission. (written in logisim and verilog)
 ## [CENG 242](https://github.com/e-hengirmen/METU/tree/master/CENG242)
 _Middle East Technical University CENG **Programming Language Concepts** course_
 
