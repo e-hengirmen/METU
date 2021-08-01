@@ -1,3 +1,6 @@
 [submodule "IE407/Term-Project"]
 	path = IE407/Term-Project
 	url = git://github.com/oonat/IE407-Term-Project
+[submodule "CENG478"]
+	path = CENG478
+	url = https://github.com/e-hengirmen/ceng478-tp
