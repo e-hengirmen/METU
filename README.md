@@ -64,7 +64,7 @@ _Middle East Technical University CENG **Programming Language Concepts** course_
 
 **Instructor:** İsmail Hakkı Toroslu
 ### Includes
-* Take Home Exam submission. (written in Haskell, C++, Prolog)
+* Programming Exam submission. (written in Haskell, C++ and Prolog)
 ## [CENG 478](https://github.com/e-hengirmen/METU/tree/master/CENG478)
 _Middle East Technical University CENG **Introduction to Parallel Computing** course_
 
