@@ -82,7 +82,7 @@ _Middle East Technical University CENG **Algorithms** course_
 **Instructor:** İsmail Hakkı Toroslu, Adnan Yazıcı, Hakan Yıldız
 ### Includes
 * Take Home Exam submissions. (written in C++)
-## [CENG 331](https://github.com/e-hengirmen/METU/tree/master/ceng331)
+## [CENG 331](https://github.com/e-hengirmen/METU/tree/master/CENG331)
 _Middle East Technical University CENG **Computer Organization** course_
 
 **Term:** Fall 2021-2022
@@ -90,7 +90,7 @@ _Middle East Technical University CENG **Computer Organization** course_
 **Instructor:** Murat Manguoğlu
 ### Includes
 * Take Home Exam submissions. (written in C and Assembly)
-## [CENG 351](https://github.com/e-hengirmen/METU/tree/master/ceng351)
+## [CENG 351](https://github.com/e-hengirmen/METU/tree/master/CENG351)
 _Middle East Technical University CENG **Data Management And File Structures** course_
 
 **Term:** Fall 2021-2022
