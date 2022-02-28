@@ -1,0 +1,415 @@
+                            | #######################################################################
+                            | # Test for copying block of size 63;
+                            | #######################################################################
+0x000:                      | 	.pos 0
+0x000: 30f41808000000000000 | main:	irmovq Stack, %rsp  	# Set up stack pointer
+                            | 
+                            | 	# Set up arguments for copy function and then invoke it
+0x00a: 30f23f00000000000000 | 	irmovq $63, %rdx		# src and dst have 63 elements
+0x014: 30f69805000000000000 | 	irmovq dest, %rsi	# dst array
+0x01e: 30f78803000000000000 | 	irmovq src, %rdi	# src array
+                            |     # corrupt all the unused registers to prevent assumptions
+0x028: 30f03103710500000000 |     irmovq $0x5710331, %rax
+0x032: 30f33103710500000000 |     irmovq $0x5710331, %rbx
+0x03c: 30f13103710500000000 |     irmovq $0x5710331, %rcx
+0x046: 30f53103710500000000 |     irmovq $0x5710331, %rbp
+0x050: 30f83103710500000000 |     irmovq $0x5710331, %r8
+0x05a: 30f93103710500000000 |     irmovq $0x5710331, %r9
+0x064: 30fa3103710500000000 |     irmovq $0x5710331, %r10
+0x06e: 30fb3103710500000000 |     irmovq $0x5710331, %r11
+0x078: 30fc3103710500000000 |     irmovq $0x5710331, %r12
+0x082: 30fd3103710500000000 |     irmovq $0x5710331, %r13
+0x08c: 30fe3103710500000000 |     irmovq $0x5710331, %r14
+0x096: 80a000000000000000   | 	call absrev		 
+0x09f: 00                   | 	halt			# should halt with abs sum in %rax
+0x0a0:                      | StartFun:
+                            | #/* $begin absrev-ys */
+                            | ##################################################################
+                            | # absrev.ys - Reverse a src block of len words to dst.
+                            | # Return the sum of absolute values of words contained in src.
+                            | #
+                            | # Include your name and ID here.
+                            | ###################################
+                            | ## Student Name:Ersel Hengirmen  ##
+                            | ## Student ID:2468015            ##
+                            | ###################################
+                            | # Describe how and why you modified the baseline code.
+                            | ##################################################################
+                            | # (17.83->17.46)its not really important since its constant, adding rcx 3 times with itself instead of adding rdx 8 times improved my slution from 17.83 to 17.46
+                            | # (17.46->17.38)combining dst-1 using leaq
+                            | # (17.38->15.53)instaed of assigning 1 and 8 to temporary registers every time I put them once at the start which decreased 2 instruction usage inside the loop and
+                            | # (15.53->15.46)jmping to check directly instead of done which could save some predictions
+                            | # (15.53->14.46)I put nops between %r10 memory operations and found out that there was exactly one instruction worth of operations that can be done so I put len calculation between them
+                            | # (14.46->14.31)Just realized I could use leaq instead of assigning constant values to registers which also emptied 2 of my registers for use
+                            | # Note1: started thinking about loop unrolling with 4 regs and checked the simulator and pipe-full-hcl it turns out that prediction model directly takes jump address so I need to decrease any conditional jump
+                            | # Note2: 2 instructions get discarded after a failed prediction also rmmov abd Ipush can create empty cycles so be careful
+                            | # (14.31->12.70)used sub and cmov to create a 4 instruction absval creation with no jumps
+                            | # (12.70->11.52)used loop unrolling with 4 using almost every register but I realized I can use 2 registers for dstrev and src
+                            | # Changed to a better model(using only 3 registers to calculate absval and updating rdi(src) and rcx(dst_rev)
+                            | #       This works at the same speed and I use only these 3 registers. It doesnt matter how many unrollings I do 
+                            | # (11.52->10.99) changed to 6 element loop unrolling( 6 was the best between 2<->8)
+                            | # (10.99->9.60) I Just remembered I could use constant values with mr rm movs (How can someone drive himself crazy) so there are 2 less address instructions for every element in loop
+                            | # Note3: [6 element->9.60] [7 element->9.61] [8 element->9.65] 
+                            | # (9.60->9.66) since there was at most 5 elements left I tried using loop unrolling with 2 element loop
+                            | #       This increased the computation but I can just remove the last iteration and remove its unnecassary calculations 
+                            | #       which should give me more than enough improvements since deleting something outside the loop was giving about %13
+                            | # (9.66->9.31) adding the last iteration outside the loop worked its magic but even though I deleted 7 instructions it only decreased by .35.
+                            | #       Even though the jmp instruction here has more probability of misspredicting it should still have given more
+                            | # (9.31->9.03) Sooooo I realized that using a second unrolling loop was unnecassary instead I just unrolled the loop into a geometrically decreasing sized groups
+                            | #       Also since checking geometrically should be the choice I increased elemtn count per loop to 8 because the cost difference is too little
+                            | # Any more work will not get me to learn anything so lets stop
+                            | #
+                            | # Thx for this wonderful homework it was hard it was quite fun
+                            | ##################################################################
+                            | # Do not modify this portion
+                            | # Function prologue.
+                            | # %rdi = src, %rsi = dst, %rdx = len
+0x0a0:                      | absrev:
+                            | ##################################################################
+                            | # You can modify this portion
+                            |     # Loop header
+0x0a0: 6300                 |     xorq %rax,%rax    	# sum = 0;
+                            |     
+                            |     # all this for dst_rev = dst + len - 1
+0x0a2: 2021                 |     rrmovq %rdx, %rcx    
+0x0a4: d086f8ffffffffffffff |     leaq -8(%rsi), %r8  # combining dst-1 using leaq(17.46->17.38)
+0x0ae: 6011                 |     addq %rcx, %rcx
+0x0b0: 6011                 |     addq %rcx, %rcx
+0x0b2: 6011                 |     addq %rcx, %rcx     # its not really important since its constant adding rcx 3 times instead of adding rdx 8 times improved my slution from 17.83 to 17.46
+0x0b4: 6081                 |     addq %r8, %rcx      # dst_rev = dst + len - 1 in adres;
+                            | 
+                            | 
+                            | 
+                            | 
+                            |     ###### those that can be used #########
+                            |     #
+                            |     # rdi,rcx           src,dstrev
+                            |     #
+                            |     # r8,r9,r10      r12,r13,r14
+                            |     #
+                            |     # rax rdx        sumpos/len
+                            |     #
+                            |     # rsi,r11           temp vals
+                            |     #    
+                            |     # rbp,rbx
+                            |     #######################################
+                            | 
+0x0b6: 70fd01000000000000   |     jmp ErselCheck
+                            | 
+                            | 
+0x0bf:                      | ErselLoop:
+0x0bf: 50670000000000000000 |     mrmovq (%rdi), %rsi     # read 1st src
+0x0c9: 30fb0000000000000000 |     irmovq $0, %r11      
+0x0d3: 616b                 |     subq %rsi, %r11      
+0x0d5: 40610000000000000000 |     rmmovq %rsi, (%rcx)     # write 1st to dst_rev
+0x0df: 226b                 |     cmovl %rsi, %r11   
+0x0e1: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x0e3: 50670800000000000000 |     mrmovq $8(%rdi), %rsi     # read 1st src
+0x0ed: 30fb0000000000000000 |     irmovq $0, %r11      
+0x0f7: 616b                 |     subq %rsi, %r11      
+0x0f9: 4061f8ffffffffffffff |     rmmovq %rsi, $-8(%rcx)     # write 1st to dst_rev
+0x103: 226b                 |     cmovl %rsi, %r11   
+0x105: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x107: 50671000000000000000 |     mrmovq $16(%rdi), %rsi     # read 1st src
+0x111: 30fb0000000000000000 |     irmovq $0, %r11      
+0x11b: 616b                 |     subq %rsi, %r11      
+0x11d: 4061f0ffffffffffffff |     rmmovq %rsi, $-16(%rcx)     # write 1st to dst_rev
+0x127: 226b                 |     cmovl %rsi, %r11   
+0x129: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x12b: 50671800000000000000 |     mrmovq $24(%rdi), %rsi     # read 1st src
+0x135: 30fb0000000000000000 |     irmovq $0, %r11      
+0x13f: 616b                 |     subq %rsi, %r11      
+0x141: 4061e8ffffffffffffff |     rmmovq %rsi, $-24(%rcx)     # write 1st to dst_rev
+0x14b: 226b                 |     cmovl %rsi, %r11   
+0x14d: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x14f: 50672000000000000000 |     mrmovq $32(%rdi), %rsi     # read 1st src
+0x159: 30fb0000000000000000 |     irmovq $0, %r11      
+0x163: 616b                 |     subq %rsi, %r11      
+0x165: 4061e0ffffffffffffff |     rmmovq %rsi, $-32(%rcx)     # write 1st to dst_rev
+0x16f: 226b                 |     cmovl %rsi, %r11   
+0x171: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x173: 50672800000000000000 |     mrmovq $40(%rdi), %rsi     # read 1st src
+0x17d: 30fb0000000000000000 |     irmovq $0, %r11      
+0x187: 616b                 |     subq %rsi, %r11      
+0x189: 4061d8ffffffffffffff |     rmmovq %rsi, $-40(%rcx)     # write 1st to dst_rev
+0x193: 226b                 |     cmovl %rsi, %r11   
+0x195: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x197: 50673000000000000000 |     mrmovq $48(%rdi), %rsi     # read 1st src
+0x1a1: 30fb0000000000000000 |     irmovq $0, %r11      
+0x1ab: 616b                 |     subq %rsi, %r11      
+0x1ad: 4061d0ffffffffffffff |     rmmovq %rsi, $-48(%rcx)     # write 1st to dst_rev
+0x1b7: 226b                 |     cmovl %rsi, %r11   
+0x1b9: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x1bb: 50673800000000000000 |     mrmovq $56(%rdi), %rsi     # read 1st src
+0x1c5: 30fb0000000000000000 |     irmovq $0, %r11      
+0x1cf: 616b                 |     subq %rsi, %r11      
+0x1d1: 4061c8ffffffffffffff |     rmmovq %rsi, $-56(%rcx)     # write 1st to dst_rev
+0x1db: 226b                 |     cmovl %rsi, %r11   
+0x1dd: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            |     
+                            | 
+                            | 
+0x1df: d0774000000000000000 |     leaq $64(%rdi),%rdi     # loop unrolling 4
+0x1e9: d011c0ffffffffffffff |     leaq $-64(%rcx),%rcx     # loop unrolling 4
+0x1f3: d022f8ffffffffffffff |     leaq $-8(%rdx),%rdx     # loop unrolling 4
+0x1fd:                      | ErselCheck:
+0x1fd: e0f20700000000000000 |     icmpq $7,%rdx    	    # len > 0?
+0x207: 76bf00000000000000   |     jg ErselLoop            # if so, goto Loop:
+                            | 
+                            | 
+                            | 
+                            | 
+                            | 
+                            | 
+                            | 
+0x210: e0f20400000000000000 |     icmpq $4,%rdx
+0x21a: 72d102000000000000   |     jl checkfor2
+                            | 
+0x223: 50670000000000000000 |     mrmovq (%rdi), %rsi     # read 1st src
+0x22d: 30fb0000000000000000 |     irmovq $0, %r11      
+0x237: 616b                 |     subq %rsi, %r11      
+0x239: 40610000000000000000 |     rmmovq %rsi, (%rcx)     # write 1st to dst_rev
+0x243: 226b                 |     cmovl %rsi, %r11   
+0x245: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x247: 50670800000000000000 |     mrmovq $8(%rdi), %rsi     # read 1st src
+0x251: 30fb0000000000000000 |     irmovq $0, %r11      
+0x25b: 616b                 |     subq %rsi, %r11      
+0x25d: 4061f8ffffffffffffff |     rmmovq %rsi, $-8(%rcx)     # write 1st to dst_rev
+0x267: 226b                 |     cmovl %rsi, %r11   
+0x269: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x26b: 50671000000000000000 |     mrmovq $16(%rdi), %rsi     # read 1st src
+0x275: 30fb0000000000000000 |     irmovq $0, %r11      
+0x27f: 616b                 |     subq %rsi, %r11      
+0x281: 4061f0ffffffffffffff |     rmmovq %rsi, $-16(%rcx)     # write 1st to dst_rev
+0x28b: 226b                 |     cmovl %rsi, %r11   
+0x28d: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x28f: 50671800000000000000 |     mrmovq $24(%rdi), %rsi     # read 1st src
+0x299: 30fb0000000000000000 |     irmovq $0, %r11      
+0x2a3: 616b                 |     subq %rsi, %r11      
+0x2a5: 4061e8ffffffffffffff |     rmmovq %rsi, $-24(%rcx)     # write 1st to dst_rev
+0x2af: 226b                 |     cmovl %rsi, %r11   
+0x2b1: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x2b3: d0772000000000000000 |     leaq $32(%rdi),%rdi     # loop unrolling 4
+0x2bd: d011e0ffffffffffffff |     leaq $-32(%rcx),%rcx     # loop unrolling 4
+0x2c7: d022fcffffffffffffff |     leaq $-4(%rdx),%rdx     # loop unrolling 4
+                            | 
+                            |     
+0x2d1:                      | checkfor2:
+0x2d1: e0f20200000000000000 |     icmpq $2,%rdx
+0x2db: 724a03000000000000   |     jl checkforLast
+                            | 
+0x2e4: 50670000000000000000 |     mrmovq (%rdi), %rsi     # read 1st src
+0x2ee: 30fb0000000000000000 |     irmovq $0, %r11      
+0x2f8: 616b                 |     subq %rsi, %r11      
+0x2fa: 40610000000000000000 |     rmmovq %rsi, (%rcx)     # write 1st to dst_rev
+0x304: 226b                 |     cmovl %rsi, %r11   
+0x306: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x308: 50670800000000000000 |     mrmovq $8(%rdi), %rsi     # read 1st src
+0x312: 30fb0000000000000000 |     irmovq $0, %r11      
+0x31c: 616b                 |     subq %rsi, %r11      
+0x31e: 4061f8ffffffffffffff |     rmmovq %rsi, $-8(%rcx)     # write 1st to dst_rev
+0x328: 226b                 |     cmovl %rsi, %r11   
+0x32a: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x32c: d0771000000000000000 |     leaq $16(%rdi),%rdi     # loop unrolling 4
+0x336: d011f0ffffffffffffff |     leaq $-16(%rcx),%rcx     # loop unrolling 4
+0x340: d022feffffffffffffff |     leaq $-2(%rdx),%rdx     # loop unrolling 4
+                            | 
+                            | 
+0x34a:                      | checkforLast:
+0x34a: e0f20100000000000000 |     icmpq $1,%rdx
+0x354: 728103000000000000   |     jl Done
+                            | 
+0x35d: 50670000000000000000 |     mrmovq (%rdi), %rsi     # read 1st src
+0x367: 30fb0000000000000000 |     irmovq $0, %r11      
+0x371: 616b                 |     subq %rsi, %r11      
+0x373: 40610000000000000000 |     rmmovq %rsi, (%rcx)     # write 1st to dst_rev
+0x37d: 226b                 |     cmovl %rsi, %r11   
+0x37f: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+                            | 
+                            | 
+                            | ##################################################################
+                            | # Do not modify the following section of code
+                            | # Function epilogue.
+0x381:                      | Done:
+0x381: 90                   |     ret
+                            | ##################################################################
+                            | # Keep the following label at the end of your function
+0x382:                      | End:
+                            | #/* $end absrev-ys */
+                            | 
+0x382:                      | EndFun:
+                            | 
+                            | ###############################
+                            | # Source and destination blocks 
+                            | ###############################
+0x388:                      | 	.align 8
+0x388:                      | src:
+0x388: 0100000000000000     | 	.quad 1
+0x390: feffffffffffffff     | 	.quad -2
+0x398: fdffffffffffffff     | 	.quad -3
+0x3a0: fcffffffffffffff     | 	.quad -4
+0x3a8: 0500000000000000     | 	.quad 5
+0x3b0: faffffffffffffff     | 	.quad -6
+0x3b8: f9ffffffffffffff     | 	.quad -7
+0x3c0: 0800000000000000     | 	.quad 8
+0x3c8: 0900000000000000     | 	.quad 9
+0x3d0: f6ffffffffffffff     | 	.quad -10
+0x3d8: f5ffffffffffffff     | 	.quad -11
+0x3e0: 0c00000000000000     | 	.quad 12
+0x3e8: 0d00000000000000     | 	.quad 13
+0x3f0: f2ffffffffffffff     | 	.quad -14
+0x3f8: f1ffffffffffffff     | 	.quad -15
+0x400: f0ffffffffffffff     | 	.quad -16
+0x408: efffffffffffffff     | 	.quad -17
+0x410: 1200000000000000     | 	.quad 18
+0x418: edffffffffffffff     | 	.quad -19
+0x420: 1400000000000000     | 	.quad 20
+0x428: ebffffffffffffff     | 	.quad -21
+0x430: eaffffffffffffff     | 	.quad -22
+0x438: 1700000000000000     | 	.quad 23
+0x440: e8ffffffffffffff     | 	.quad -24
+0x448: 1900000000000000     | 	.quad 25
+0x450: 1a00000000000000     | 	.quad 26
+0x458: e5ffffffffffffff     | 	.quad -27
+0x460: 1c00000000000000     | 	.quad 28
+0x468: e3ffffffffffffff     | 	.quad -29
+0x470: e2ffffffffffffff     | 	.quad -30
+0x478: e1ffffffffffffff     | 	.quad -31
+0x480: e0ffffffffffffff     | 	.quad -32
+0x488: 2100000000000000     | 	.quad 33
+0x490: deffffffffffffff     | 	.quad -34
+0x498: ddffffffffffffff     | 	.quad -35
+0x4a0: 2400000000000000     | 	.quad 36
+0x4a8: dbffffffffffffff     | 	.quad -37
+0x4b0: daffffffffffffff     | 	.quad -38
+0x4b8: 2700000000000000     | 	.quad 39
+0x4c0: 2800000000000000     | 	.quad 40
+0x4c8: 2900000000000000     | 	.quad 41
+0x4d0: 2a00000000000000     | 	.quad 42
+0x4d8: d5ffffffffffffff     | 	.quad -43
+0x4e0: d4ffffffffffffff     | 	.quad -44
+0x4e8: d3ffffffffffffff     | 	.quad -45
+0x4f0: d2ffffffffffffff     | 	.quad -46
+0x4f8: d1ffffffffffffff     | 	.quad -47
+0x500: d0ffffffffffffff     | 	.quad -48
+0x508: 3100000000000000     | 	.quad 49
+0x510: 3200000000000000     | 	.quad 50
+0x518: 3300000000000000     | 	.quad 51
+0x520: ccffffffffffffff     | 	.quad -52
+0x528: 3500000000000000     | 	.quad 53
+0x530: caffffffffffffff     | 	.quad -54
+0x538: 3700000000000000     | 	.quad 55
+0x540: 3800000000000000     | 	.quad 56
+0x548: 3900000000000000     | 	.quad 57
+0x550: 3a00000000000000     | 	.quad 58
+0x558: 3b00000000000000     | 	.quad 59
+0x560: 3c00000000000000     | 	.quad 60
+0x568: 3d00000000000000     | 	.quad 61
+0x570: 3e00000000000000     | 	.quad 62
+0x578: 3f00000000000000     | 	.quad 63
+0x580: fadebc0000000000     | 	.quad 0xbcdefa # This shouldn't get moved
+                            | 
+0x590:                      | 	.align 16
+0x590:                      | Predest:
+0x590: fadebc0000000000     | 	.quad 0xbcdefa
+0x598:                      | dest:
+0x598: abefcd0000000000     | 	.quad 0xcdefab
+0x5a0: abefcd0000000000     | 	.quad 0xcdefab
+0x5a8: abefcd0000000000     | 	.quad 0xcdefab
+0x5b0: abefcd0000000000     | 	.quad 0xcdefab
+0x5b8: abefcd0000000000     | 	.quad 0xcdefab
+0x5c0: abefcd0000000000     | 	.quad 0xcdefab
+0x5c8: abefcd0000000000     | 	.quad 0xcdefab
+0x5d0: abefcd0000000000     | 	.quad 0xcdefab
+0x5d8: abefcd0000000000     | 	.quad 0xcdefab
+0x5e0: abefcd0000000000     | 	.quad 0xcdefab
+0x5e8: abefcd0000000000     | 	.quad 0xcdefab
+0x5f0: abefcd0000000000     | 	.quad 0xcdefab
+0x5f8: abefcd0000000000     | 	.quad 0xcdefab
+0x600: abefcd0000000000     | 	.quad 0xcdefab
+0x608: abefcd0000000000     | 	.quad 0xcdefab
+0x610: abefcd0000000000     | 	.quad 0xcdefab
+0x618: abefcd0000000000     | 	.quad 0xcdefab
+0x620: abefcd0000000000     | 	.quad 0xcdefab
+0x628: abefcd0000000000     | 	.quad 0xcdefab
+0x630: abefcd0000000000     | 	.quad 0xcdefab
+0x638: abefcd0000000000     | 	.quad 0xcdefab
+0x640: abefcd0000000000     | 	.quad 0xcdefab
+0x648: abefcd0000000000     | 	.quad 0xcdefab
+0x650: abefcd0000000000     | 	.quad 0xcdefab
+0x658: abefcd0000000000     | 	.quad 0xcdefab
+0x660: abefcd0000000000     | 	.quad 0xcdefab
+0x668: abefcd0000000000     | 	.quad 0xcdefab
+0x670: abefcd0000000000     | 	.quad 0xcdefab
+0x678: abefcd0000000000     | 	.quad 0xcdefab
+0x680: abefcd0000000000     | 	.quad 0xcdefab
+0x688: abefcd0000000000     | 	.quad 0xcdefab
+0x690: abefcd0000000000     | 	.quad 0xcdefab
+0x698: abefcd0000000000     | 	.quad 0xcdefab
+0x6a0: abefcd0000000000     | 	.quad 0xcdefab
+0x6a8: abefcd0000000000     | 	.quad 0xcdefab
+0x6b0: abefcd0000000000     | 	.quad 0xcdefab
+0x6b8: abefcd0000000000     | 	.quad 0xcdefab
+0x6c0: abefcd0000000000     | 	.quad 0xcdefab
+0x6c8: abefcd0000000000     | 	.quad 0xcdefab
+0x6d0: abefcd0000000000     | 	.quad 0xcdefab
+0x6d8: abefcd0000000000     | 	.quad 0xcdefab
+0x6e0: abefcd0000000000     | 	.quad 0xcdefab
+0x6e8: abefcd0000000000     | 	.quad 0xcdefab
+0x6f0: abefcd0000000000     | 	.quad 0xcdefab
+0x6f8: abefcd0000000000     | 	.quad 0xcdefab
+0x700: abefcd0000000000     | 	.quad 0xcdefab
+0x708: abefcd0000000000     | 	.quad 0xcdefab
+0x710: abefcd0000000000     | 	.quad 0xcdefab
+0x718: abefcd0000000000     | 	.quad 0xcdefab
+0x720: abefcd0000000000     | 	.quad 0xcdefab
+0x728: abefcd0000000000     | 	.quad 0xcdefab
+0x730: abefcd0000000000     | 	.quad 0xcdefab
+0x738: abefcd0000000000     | 	.quad 0xcdefab
+0x740: abefcd0000000000     | 	.quad 0xcdefab
+0x748: abefcd0000000000     | 	.quad 0xcdefab
+0x750: abefcd0000000000     | 	.quad 0xcdefab
+0x758: abefcd0000000000     | 	.quad 0xcdefab
+0x760: abefcd0000000000     | 	.quad 0xcdefab
+0x768: abefcd0000000000     | 	.quad 0xcdefab
+0x770: abefcd0000000000     | 	.quad 0xcdefab
+0x778: abefcd0000000000     | 	.quad 0xcdefab
+0x780: abefcd0000000000     | 	.quad 0xcdefab
+0x788: abefcd0000000000     | 	.quad 0xcdefab
+0x790:                      | Postdest:
+0x790: bcfade0000000000     | 	.quad 0xdefabc
+                            | 
+0x798:                      | .align 8
+                            | # Run time stack
+0x798: 0000000000000000     | 	.quad 0
+0x7a0: 0000000000000000     | 	.quad 0
+0x7a8: 0000000000000000     | 	.quad 0
+0x7b0: 0000000000000000     | 	.quad 0
+0x7b8: 0000000000000000     | 	.quad 0
+0x7c0: 0000000000000000     | 	.quad 0
+0x7c8: 0000000000000000     | 	.quad 0
+0x7d0: 0000000000000000     | 	.quad 0
+0x7d8: 0000000000000000     | 	.quad 0
+0x7e0: 0000000000000000     | 	.quad 0
+0x7e8: 0000000000000000     | 	.quad 0
+0x7f0: 0000000000000000     | 	.quad 0
+0x7f8: 0000000000000000     | 	.quad 0
+0x800: 0000000000000000     | 	.quad 0
+0x808: 0000000000000000     | 	.quad 0
+0x810: 0000000000000000     | 	.quad 0
+                            | 
+0x818:                      | Stack:

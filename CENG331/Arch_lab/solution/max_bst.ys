@@ -1,0 +1,79 @@
+###################################
+## Student Name:Ersel Hengirmen  ##
+## Student ID:2468015            ##
+###################################
+.pos 0
+    irmovq stack, %rsp
+    irmovq root, %rdi
+    call max_bst
+    halt
+
+
+max_bst:
+    irmovq 0,%rax           #max=0
+    andq %rdi,%rdi
+    je done                 #if
+    mrmovq 16(%rdi),%rsi    #next is rsi
+    jmp check
+loop:
+    rrmovq %rsi,%rdi        #current=next
+    mrmovq 16(%rsi),%rsi    #next calculation
+check:
+    andq %rsi,%rsi          #while check
+    jne loop
+
+    mrmovq (%rdi),%rax
+done:
+    ret
+
+
+.pos 0x200
+root:
+    .quad 17
+    .quad node6
+    .quad node24
+node6:
+    .quad 6
+    .quad node4
+    .quad node11
+node4:
+    .quad 4
+    .quad node3
+    .quad node5
+node3:
+    .quad 3
+    .quad 0
+    .quad 0
+node5:
+    .quad 5
+    .quad 0
+    .quad 0
+node11:
+    .quad 11
+    .quad node8
+    .quad 0
+node8:
+    .quad 8
+    .quad 0
+    .quad 0
+node24:
+    .quad 24
+    .quad node19
+    .quad node40
+node19:
+    .quad 19
+    .quad 0
+    .quad 0
+node40:
+    .quad 40
+    .quad 0
+    .quad node52
+node52:
+    .quad 52
+    .quad 0
+    .quad 0
+
+
+
+.pos 0x800
+stack:

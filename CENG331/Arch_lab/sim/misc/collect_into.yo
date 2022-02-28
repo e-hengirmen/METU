@@ -1,0 +1,132 @@
+                            | ###################################
+                            | ## Student Name:Ersel Hengirmen  ##
+                            | ## Student ID:2468015            ##
+                            | ###################################
+0x000:                      | .pos 0
+0x000: 30f40008000000000000 |     irmovq stack, %rsp
+0x00a: 30f70002000000000000 |     irmovq root, %rdi
+0x014: 30f60004000000000000 |     irmovq array, %rsi
+0x01e: 30f20800000000000000 |     irmovq 8, %rdx       #number of elements
+0x028: 803200000000000000   |     call collect_into
+0x031: 00                   |     halt
+                            | 
+                            | 
+                            | 
+0x032:                      | collect_into:
+0x032: 6277                 |     andq %rdi,%rdi
+0x034: 73d000000000000000   |     je done1         #if !root jump
+0x03d: 30fb0000000000000000 |     irmovq 0,%r11
+0x047: 612b                 |     subq %rdx,%r11
+0x049: 75d000000000000000   |     jge done1        # if array_len <= 0 jmp
+                            | 
+0x052: a07f                 |     pushq %rdi
+0x054: a06f                 |     pushq %rsi
+0x056: a02f                 |     pushq %rdx
+0x058: 50770800000000000000 |     mrmovq 8(%rdi),%rdi
+0x062: 803200000000000000   |     call collect_into
+0x06b: 2001                 |     rrmovq %rax,%rcx    ### rcx is left_len ###
+0x06d: 200b                 |     rrmovq %rax,%r11    #temp for compare
+0x06f: b02f                 |     popq %rdx
+0x071: b06f                 |     popq %rsi
+0x073: b07f                 |     popq %rdi
+                            | 
+0x075: 612b                 |     subq %rdx,%r11
+0x077: 73db00000000000000   |     je done2
+                            | 
+0x080: 30fa0100000000000000 |     irmovq 1,%r10       # will be used later
+                            | 
+0x08a: 200b                 |     rrmovq %rax,%r11    # %r11=left_len
+0x08c: 60bb                 |     addq %r11,%r11
+0x08e: 60bb                 |     addq %r11,%r11
+0x090: 60bb                 |     addq %r11,%r11      # %r11=8*left_len
+0x092: 50970000000000000000 |     mrmovq (%rdi),%r9   # %r9=root->value
+0x09c: 606b                 |     addq %rsi,%r11
+0x09e: 409b0000000000000000 |     rmmovq %r9,(%r11)   # array[left_len] = root->value;
+                            |     
+0x0a8: 60a1                 |     addq %r10,%rcx          #rcx=lef_len+1
+0x0aa: 2018                 |     rrmovq %rcx,%r8         #temp for rsi calculation
+0x0ac: a01f                 |     pushq %rcx
+0x0ae: 6088                 |     addq %r8,%r8
+0x0b0: 6088                 |     addq %r8,%r8
+0x0b2: 6088                 |     addq %r8,%r8            #%r8=8*(left_len+1)
+0x0b4: 6086                 |     addq %r8,%rsi           #2nd arg=array + left_len + 1
+0x0b6: 6112                 |     subq %rcx,%rdx          #3rd arg=array_len-left_len-1
+0x0b8: 50771000000000000000 |     mrmovq 16(%rdi),%rdi    #1st arg=root->right
+0x0c2: 803200000000000000   |     call collect_into
+0x0cb: b01f                 |     popq %rcx
+0x0cd: 6010                 |     addq %rcx,%rax
+0x0cf: 90                   |     ret
+                            | 
+0x0d0:                      | done1:
+0x0d0: 30f00000000000000000 |     irmovq 0,%rax
+0x0da: 90                   |     ret
+0x0db:                      | done2:
+0x0db: 2010                 |     rrmovq %rcx,%rax
+0x0dd: 90                   |     ret
+                            | 
+                            | 
+                            | 
+                            | 
+                            | 
+                            | 
+                            | 
+0x200:                      | .pos 0x200
+0x200:                      | root:
+0x200: 1100000000000000     |     .quad 17
+0x208: 1802000000000000     |     .quad node6
+0x210: a802000000000000     |     .quad node24
+0x218:                      | node6:
+0x218: 0600000000000000     |     .quad 6
+0x220: 3002000000000000     |     .quad node4
+0x228: 7802000000000000     |     .quad node11
+0x230:                      | node4:
+0x230: 0400000000000000     |     .quad 4
+0x238: 4802000000000000     |     .quad node3
+0x240: 6002000000000000     |     .quad node5
+0x248:                      | node3:
+0x248: 0300000000000000     |     .quad 3
+0x250: 0000000000000000     |     .quad 0
+0x258: 0000000000000000     |     .quad 0
+0x260:                      | node5:
+0x260: 0500000000000000     |     .quad 5
+0x268: 0000000000000000     |     .quad 0
+0x270: 0000000000000000     |     .quad 0
+0x278:                      | node11:
+0x278: 0b00000000000000     |     .quad 11
+0x280: 9002000000000000     |     .quad node8
+0x288: 0000000000000000     |     .quad 0
+0x290:                      | node8:
+0x290: 0800000000000000     |     .quad 8
+0x298: 0000000000000000     |     .quad 0
+0x2a0: 0000000000000000     |     .quad 0
+0x2a8:                      | node24:
+0x2a8: 1800000000000000     |     .quad 24
+0x2b0: c002000000000000     |     .quad node19
+0x2b8: d802000000000000     |     .quad node40
+0x2c0:                      | node19:
+0x2c0: 1300000000000000     |     .quad 19
+0x2c8: 0000000000000000     |     .quad 0
+0x2d0: 0000000000000000     |     .quad 0
+0x2d8:                      | node40:
+0x2d8: 2800000000000000     |     .quad 40
+0x2e0: 0000000000000000     |     .quad 0
+0x2e8: f002000000000000     |     .quad node52
+0x2f0:                      | node52:
+0x2f0: 3400000000000000     |     .quad 52
+0x2f8: 0000000000000000     |     .quad 0
+0x300: 0000000000000000     |     .quad 0
+                            | 
+0x400:                      | .pos 0x400
+0x400:                      | array:
+0x400: 0000000000000000     |     .quad 0
+0x408: 0000000000000000     |     .quad 0
+0x410: 0000000000000000     |     .quad 0
+0x418: 0000000000000000     |     .quad 0
+0x420: 0000000000000000     |     .quad 0
+0x428: 0000000000000000     |     .quad 0
+0x430: 0000000000000000     |     .quad 0
+0x438: 0000000000000000     |     .quad 0
+                            | 
+                            | 
+0x800:                      | .pos 0x800
+0x800:                      | stack:

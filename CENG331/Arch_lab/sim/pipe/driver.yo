@@ -1,0 +1,366 @@
+                            | #######################################################################
+                            | # Test for copying block of size K;
+                            | #######################################################################
+0x000:                      | 	.pos 0
+0x000: 30f4a005000000000000 | main:	irmovq Stack, %rsp  	# Set up stack pointer
+                            | 
+                            | 	# Set up arguments for copy function and then invoke it
+0x00a: 30f2ffffffffffffffff | 	irmovq $K, %rdx		# src and dst have K elements
+0x014: 30f61805000000000000 | 	irmovq dest, %rsi	# dst array
+0x01e: 30f70005000000000000 | 	irmovq src, %rdi	# src array
+                            |     # corrupt all the unused registers to prevent assumptions
+0x028: 30f03103710500000000 |     irmovq $0x5710331, %rax
+0x032: 30f33103710500000000 |     irmovq $0x5710331, %rbx
+0x03c: 30f13103710500000000 |     irmovq $0x5710331, %rcx
+0x046: 30f53103710500000000 |     irmovq $0x5710331, %rbp
+0x050: 30f83103710500000000 |     irmovq $0x5710331, %r8
+0x05a: 30f93103710500000000 |     irmovq $0x5710331, %r9
+0x064: 30fa3103710500000000 |     irmovq $0x5710331, %r10
+0x06e: 30fb3103710500000000 |     irmovq $0x5710331, %r11
+0x078: 30fc3103710500000000 |     irmovq $0x5710331, %r12
+0x082: 30fd3103710500000000 |     irmovq $0x5710331, %r13
+0x08c: 30fe3103710500000000 |     irmovq $0x5710331, %r14
+0x096: 80a900000000000000   | 	call absrev		 
+0x09f: 808b03000000000000   | 	call check	        # Call checker code
+0x0a8: 00                   | 	halt                # should halt with 0xaaaa in %rax
+0x0a9:                      | StartFun:
+                            | #/* $begin absrev-ys */
+                            | ##################################################################
+                            | # absrev.ys - Reverse a src block of len words to dst.
+                            | # Return the sum of absolute values of words contained in src.
+                            | #
+                            | # Include your name and ID here.
+                            | ###################################
+                            | ## Student Name:Ersel Hengirmen  ##
+                            | ## Student ID:2468015            ##
+                            | ###################################
+                            | # Describe how and why you modified the baseline code.
+                            | ##################################################################
+                            | # (17.83->17.46)its not really important since its constant, adding rcx 3 times with itself instead of adding rdx 8 times improved my slution from 17.83 to 17.46
+                            | # (17.46->17.38)combining dst-1 using leaq
+                            | # (17.38->15.53)instaed of assigning 1 and 8 to temporary registers every time I put them once at the start which decreased 2 instruction usage inside the loop and
+                            | # (15.53->15.46)jmping to check directly instead of done which could save some predictions
+                            | # (15.53->14.46)I put nops between %r10 memory operations and found out that there was exactly one instruction worth of operations that can be done so I put len calculation between them
+                            | # (14.46->14.31)Just realized I could use leaq instead of assigning constant values to registers which also emptied 2 of my registers for use
+                            | # Note1: started thinking about loop unrolling with 4 regs and checked the simulator and pipe-full-hcl it turns out that prediction model directly takes jump address so I need to decrease any conditional jump
+                            | # Note2: 2 instructions get discarded after a failed prediction also rmmov abd Ipush can create empty cycles so be careful
+                            | # (14.31->12.70)used sub and cmov to create a 4 instruction absval creation with no jumps
+                            | # (12.70->11.52)used loop unrolling with 4 using almost every register but I realized I can use 2 registers for dstrev and src
+                            | # Changed to a better model(using only 3 registers to calculate absval and updating rdi(src) and rcx(dst_rev)
+                            | #       This works at the same speed and I use only these 3 registers. It doesnt matter how many unrollings I do 
+                            | # (11.52->10.99) changed to 6 element loop unrolling( 6 was the best between 2<->8)
+                            | # (10.99->9.60) I Just remembered I could use constant values with mr rm movs (How can someone drive himself crazy) so there are 2 less address instructions for every element in loop
+                            | # Note3: [6 element->9.60] [7 element->9.61] [8 element->9.65] 
+                            | # (9.60->9.66) since there was at most 5 elements left I tried using loop unrolling with 2 element loop
+                            | #       This increased the computation but I can just remove the last iteration and remove its unnecassary calculations 
+                            | #       which should give me more than enough improvements since deleting something outside the loop was giving about %13
+                            | # (9.66->9.31) adding the last iteration outside the loop worked its magic but even though I deleted 7 instructions it only decreased by .35.
+                            | #       Even though the jmp instruction here has more probability of misspredicting it should still have given more
+                            | # (9.31->9.03) Sooooo I realized that using a second unrolling loop was unnecassary instead I just unrolled the loop into a geometrically decreasing sized groups
+                            | #       Also since checking geometrically should be the choice I increased elemtn count per loop to 8 because the cost difference is too little
+                            | # Any more work will not get me to learn anything so lets stop
+                            | #
+                            | # Thx for this wonderful homework it was hard it was quite fun
+                            | ##################################################################
+                            | # Do not modify this portion
+                            | # Function prologue.
+                            | # %rdi = src, %rsi = dst, %rdx = len
+0x0a9:                      | absrev:
+                            | ##################################################################
+                            | # You can modify this portion
+                            |     # Loop header
+0x0a9: 6300                 |     xorq %rax,%rax    	# sum = 0;
+                            |     
+                            |     # all this for dst_rev = dst + len - 1
+0x0ab: 2021                 |     rrmovq %rdx, %rcx    
+0x0ad: d086f8ffffffffffffff |     leaq -8(%rsi), %r8  # combining dst-1 using leaq(17.46->17.38)
+0x0b7: 6011                 |     addq %rcx, %rcx
+0x0b9: 6011                 |     addq %rcx, %rcx
+0x0bb: 6011                 |     addq %rcx, %rcx     # its not really important since its constant adding rcx 3 times instead of adding rdx 8 times improved my slution from 17.83 to 17.46
+0x0bd: 6081                 |     addq %r8, %rcx      # dst_rev = dst + len - 1 in adres;
+                            | 
+                            | 
+                            | 
+                            | 
+                            |     ###### those that can be used #########
+                            |     #
+                            |     # rdi,rcx           src,dstrev
+                            |     #
+                            |     # r8,r9,r10      r12,r13,r14
+                            |     #
+                            |     # rax rdx        sumpos/len
+                            |     #
+                            |     # rsi,r11           temp vals
+                            |     #    
+                            |     # rbp,rbx
+                            |     #######################################
+                            | 
+0x0bf: 700602000000000000   |     jmp ErselCheck
+                            | 
+                            | 
+0x0c8:                      | ErselLoop:
+0x0c8: 50670000000000000000 |     mrmovq (%rdi), %rsi     # read 1st src
+0x0d2: 30fb0000000000000000 |     irmovq $0, %r11      
+0x0dc: 616b                 |     subq %rsi, %r11      
+0x0de: 40610000000000000000 |     rmmovq %rsi, (%rcx)     # write 1st to dst_rev
+0x0e8: 226b                 |     cmovl %rsi, %r11   
+0x0ea: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x0ec: 50670800000000000000 |     mrmovq $8(%rdi), %rsi     # read 1st src
+0x0f6: 30fb0000000000000000 |     irmovq $0, %r11      
+0x100: 616b                 |     subq %rsi, %r11      
+0x102: 4061f8ffffffffffffff |     rmmovq %rsi, $-8(%rcx)     # write 1st to dst_rev
+0x10c: 226b                 |     cmovl %rsi, %r11   
+0x10e: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x110: 50671000000000000000 |     mrmovq $16(%rdi), %rsi     # read 1st src
+0x11a: 30fb0000000000000000 |     irmovq $0, %r11      
+0x124: 616b                 |     subq %rsi, %r11      
+0x126: 4061f0ffffffffffffff |     rmmovq %rsi, $-16(%rcx)     # write 1st to dst_rev
+0x130: 226b                 |     cmovl %rsi, %r11   
+0x132: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x134: 50671800000000000000 |     mrmovq $24(%rdi), %rsi     # read 1st src
+0x13e: 30fb0000000000000000 |     irmovq $0, %r11      
+0x148: 616b                 |     subq %rsi, %r11      
+0x14a: 4061e8ffffffffffffff |     rmmovq %rsi, $-24(%rcx)     # write 1st to dst_rev
+0x154: 226b                 |     cmovl %rsi, %r11   
+0x156: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x158: 50672000000000000000 |     mrmovq $32(%rdi), %rsi     # read 1st src
+0x162: 30fb0000000000000000 |     irmovq $0, %r11      
+0x16c: 616b                 |     subq %rsi, %r11      
+0x16e: 4061e0ffffffffffffff |     rmmovq %rsi, $-32(%rcx)     # write 1st to dst_rev
+0x178: 226b                 |     cmovl %rsi, %r11   
+0x17a: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x17c: 50672800000000000000 |     mrmovq $40(%rdi), %rsi     # read 1st src
+0x186: 30fb0000000000000000 |     irmovq $0, %r11      
+0x190: 616b                 |     subq %rsi, %r11      
+0x192: 4061d8ffffffffffffff |     rmmovq %rsi, $-40(%rcx)     # write 1st to dst_rev
+0x19c: 226b                 |     cmovl %rsi, %r11   
+0x19e: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x1a0: 50673000000000000000 |     mrmovq $48(%rdi), %rsi     # read 1st src
+0x1aa: 30fb0000000000000000 |     irmovq $0, %r11      
+0x1b4: 616b                 |     subq %rsi, %r11      
+0x1b6: 4061d0ffffffffffffff |     rmmovq %rsi, $-48(%rcx)     # write 1st to dst_rev
+0x1c0: 226b                 |     cmovl %rsi, %r11   
+0x1c2: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x1c4: 50673800000000000000 |     mrmovq $56(%rdi), %rsi     # read 1st src
+0x1ce: 30fb0000000000000000 |     irmovq $0, %r11      
+0x1d8: 616b                 |     subq %rsi, %r11      
+0x1da: 4061c8ffffffffffffff |     rmmovq %rsi, $-56(%rcx)     # write 1st to dst_rev
+0x1e4: 226b                 |     cmovl %rsi, %r11   
+0x1e6: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            |     
+                            | 
+                            | 
+0x1e8: d0774000000000000000 |     leaq $64(%rdi),%rdi     # loop unrolling 4
+0x1f2: d011c0ffffffffffffff |     leaq $-64(%rcx),%rcx     # loop unrolling 4
+0x1fc: d022f8ffffffffffffff |     leaq $-8(%rdx),%rdx     # loop unrolling 4
+0x206:                      | ErselCheck:
+0x206: e0f20700000000000000 |     icmpq $7,%rdx    	    # len > 0?
+0x210: 76c800000000000000   |     jg ErselLoop            # if so, goto Loop:
+                            | 
+                            | 
+                            | 
+                            | 
+                            | 
+                            | 
+                            | 
+0x219: e0f20400000000000000 |     icmpq $4,%rdx
+0x223: 72da02000000000000   |     jl checkfor2
+                            | 
+0x22c: 50670000000000000000 |     mrmovq (%rdi), %rsi     # read 1st src
+0x236: 30fb0000000000000000 |     irmovq $0, %r11      
+0x240: 616b                 |     subq %rsi, %r11      
+0x242: 40610000000000000000 |     rmmovq %rsi, (%rcx)     # write 1st to dst_rev
+0x24c: 226b                 |     cmovl %rsi, %r11   
+0x24e: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x250: 50670800000000000000 |     mrmovq $8(%rdi), %rsi     # read 1st src
+0x25a: 30fb0000000000000000 |     irmovq $0, %r11      
+0x264: 616b                 |     subq %rsi, %r11      
+0x266: 4061f8ffffffffffffff |     rmmovq %rsi, $-8(%rcx)     # write 1st to dst_rev
+0x270: 226b                 |     cmovl %rsi, %r11   
+0x272: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x274: 50671000000000000000 |     mrmovq $16(%rdi), %rsi     # read 1st src
+0x27e: 30fb0000000000000000 |     irmovq $0, %r11      
+0x288: 616b                 |     subq %rsi, %r11      
+0x28a: 4061f0ffffffffffffff |     rmmovq %rsi, $-16(%rcx)     # write 1st to dst_rev
+0x294: 226b                 |     cmovl %rsi, %r11   
+0x296: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x298: 50671800000000000000 |     mrmovq $24(%rdi), %rsi     # read 1st src
+0x2a2: 30fb0000000000000000 |     irmovq $0, %r11      
+0x2ac: 616b                 |     subq %rsi, %r11      
+0x2ae: 4061e8ffffffffffffff |     rmmovq %rsi, $-24(%rcx)     # write 1st to dst_rev
+0x2b8: 226b                 |     cmovl %rsi, %r11   
+0x2ba: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x2bc: d0772000000000000000 |     leaq $32(%rdi),%rdi     # loop unrolling 4
+0x2c6: d011e0ffffffffffffff |     leaq $-32(%rcx),%rcx     # loop unrolling 4
+0x2d0: d022fcffffffffffffff |     leaq $-4(%rdx),%rdx     # loop unrolling 4
+                            | 
+                            |     
+0x2da:                      | checkfor2:
+0x2da: e0f20200000000000000 |     icmpq $2,%rdx
+0x2e4: 725303000000000000   |     jl checkforLast
+                            | 
+0x2ed: 50670000000000000000 |     mrmovq (%rdi), %rsi     # read 1st src
+0x2f7: 30fb0000000000000000 |     irmovq $0, %r11      
+0x301: 616b                 |     subq %rsi, %r11      
+0x303: 40610000000000000000 |     rmmovq %rsi, (%rcx)     # write 1st to dst_rev
+0x30d: 226b                 |     cmovl %rsi, %r11   
+0x30f: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x311: 50670800000000000000 |     mrmovq $8(%rdi), %rsi     # read 1st src
+0x31b: 30fb0000000000000000 |     irmovq $0, %r11      
+0x325: 616b                 |     subq %rsi, %r11      
+0x327: 4061f8ffffffffffffff |     rmmovq %rsi, $-8(%rcx)     # write 1st to dst_rev
+0x331: 226b                 |     cmovl %rsi, %r11   
+0x333: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+0x335: d0771000000000000000 |     leaq $16(%rdi),%rdi     # loop unrolling 4
+0x33f: d011f0ffffffffffffff |     leaq $-16(%rcx),%rcx     # loop unrolling 4
+0x349: d022feffffffffffffff |     leaq $-2(%rdx),%rdx     # loop unrolling 4
+                            | 
+                            | 
+0x353:                      | checkforLast:
+0x353: e0f20100000000000000 |     icmpq $1,%rdx
+0x35d: 728a03000000000000   |     jl Done
+                            | 
+0x366: 50670000000000000000 |     mrmovq (%rdi), %rsi     # read 1st src
+0x370: 30fb0000000000000000 |     irmovq $0, %r11      
+0x37a: 616b                 |     subq %rsi, %r11      
+0x37c: 40610000000000000000 |     rmmovq %rsi, (%rcx)     # write 1st to dst_rev
+0x386: 226b                 |     cmovl %rsi, %r11   
+0x388: 60b0                 |     addq %r11, %rax      # sum+=absval calculation with 4 instructions
+                            | 
+                            | 
+                            | 
+                            | ##################################################################
+                            | # Do not modify the following section of code
+                            | # Function epilogue.
+0x38a:                      | Done:
+0x38a: 90                   |     ret
+                            | ##################################################################
+                            | # Keep the following label at the end of your function
+0x38b:                      | End:
+                            | #/* $end absrev-ys */
+                            | 
+0x38b:                      | EndFun:
+                            | #################################################################### 
+                            | # Epilogue code for the correctness testing driver
+                            | ####################################################################
+                            | 
+                            | # This is the correctness checking code.
+                            | # It checks:
+                            | #   1. %rax has 0.  Set %rax to 0xbbbb if not.
+                            | #   2. The total length of the code is less than or equal to 1000.
+                            | #      Set %rax to 0xcccc if not.
+                            | #   3. The source data was copied to the destination in reverse.
+                            | #      Set %rax to 0xdddd if not.
+                            | #   4. The words just before and just after the destination region
+                            | #      were not corrupted.  Set %rax to 0xeeee if not.
+                            | # If all checks pass, then sets %rax to 0xaaaa
+0x38b:                      | check:
+                            | 	# Return value test
+0x38b: 30fa0000000000000000 | 	irmovq $0,%r10
+0x395: 61a0                 | 	subq %r10,%rax
+0x397: 73b303000000000000   | 	je checkb
+0x3a0: 30f0bbbb000000000000 | 	irmovq $0xbbbb,%rax  # Failed test #1
+0x3aa: 70fd04000000000000   | 	jmp cdone
+0x3b3:                      | checkb:
+                            | 	# Code length check
+0x3b3: 30f08b03000000000000 | 	irmovq EndFun,%rax
+0x3bd: 30f2a900000000000000 | 	irmovq StartFun,%rdx
+0x3c7: 6120                 | 	subq %rdx,%rax
+0x3c9: 30f2e803000000000000 | 	irmovq $1000,%rdx
+0x3d3: 6102                 | 	subq %rax,%rdx
+0x3d5: 75f103000000000000   | 	jge checkm
+0x3de: 30f0cccc000000000000 | 	irmovq $0xcccc,%rax  # Failed test #2
+0x3e8: 70fd04000000000000   | 	jmp cdone
+0x3f1:                      | checkm:
+0x3f1: 30f6f8ffffffffffffff |     irmovq $-8, %rsi
+0x3fb: 30f21805000000000000 | 	irmovq dest, %rdx 
+0x405: 6062                 | 	addq %rsi, %rdx   # Pointer to next destination location
+0x407: 30f30005000000000000 | 	irmovq src,%rbx   # Pointer to next source location
+0x411: 30f7ffffffffffffffff | 	irmovq $K,%rdi  # Count
+0x41b: 6277                 | 	andq %rdi,%rdi
+0x41d: 737b04000000000000   | 	je checkpre         # Skip check if count = 0
+0x426:                      | mcloop:
+0x426: 50020000000000000000 | 	mrmovq (%rdx),%rax
+0x430: 50630000000000000000 | 	mrmovq (%rbx),%rsi
+0x43a: 6160                 | 	subq %rsi,%rax
+0x43c: 735804000000000000   | 	je  mok
+0x445: 30f0dddd000000000000 | 	irmovq $0xdddd,%rax # Failed test #3
+0x44f: 70fd04000000000000   | 	jmp cdone
+0x458:                      | mok:
+0x458: 30f00800000000000000 | 	irmovq $8,%rax
+0x462: 6102                 | 	subq %rax,%rdx	  # dest--
+0x464: 6003                 | 	addq %rax,%rbx    # src++
+0x466: 30f00100000000000000 | 	irmovq $1,%rax
+0x470: 6107                 | 	subq %rax,%rdi    # cnt--
+0x472: 762604000000000000   | 	jg mcloop
+0x47b:                      | checkpre:
+                            | 	# Check for corruption
+0x47b: 30f21005000000000000 | 	irmovq Predest,%rdx
+0x485: 50020000000000000000 | 	mrmovq (%rdx), %rax  # Get word before destination
+0x48f: 30f2fadebc0000000000 | 	irmovq $0xbcdefa, %rdx
+0x499: 6120                 | 	subq %rdx,%rax
+0x49b: 73b704000000000000   | 	je checkpost
+0x4a4: 30f0eeee000000000000 | 	irmovq $0xeeee,%rax  # Failed test #4
+0x4ae: 70fd04000000000000   | 	jmp cdone
+0x4b7:                      | checkpost:
+                            | 	# Check for corruption
+0x4b7: 30f21805000000000000 | 	irmovq Postdest,%rdx
+0x4c1: 50020000000000000000 | 	mrmovq (%rdx), %rax  # Get word after destination
+0x4cb: 30f2bcfade0000000000 | 	irmovq $0xdefabc, %rdx
+0x4d5: 6120                 | 	subq %rdx,%rax
+0x4d7: 73f304000000000000   | 	je checkok
+0x4e0: 30f0eeee000000000000 | 	irmovq $0xeeee,%rax # Failed test #4
+0x4ea: 70fd04000000000000   | 	jmp cdone
+0x4f3:                      | checkok:
+                            | 	# Successful checks
+0x4f3: 30f0aaaa000000000000 | 	irmovq $0xaaaa,%rax
+0x4fd:                      | cdone:
+0x4fd: 90                   | 	ret
+                            | 
+                            | ###############################
+                            | # Source and destination blocks 
+                            | ###############################
+0x500:                      | 	.align 8
+0x500:                      | src:
+0x500: fadebc0000000000     | 	.quad 0xbcdefa # This shouldn't get moved
+                            | 
+0x510:                      | 	.align 16
+0x510:                      | Predest:
+0x510: fadebc0000000000     | 	.quad 0xbcdefa
+0x518:                      | dest:
+0x518:                      | Postdest:
+0x518: bcfade0000000000     | 	.quad 0xdefabc
+                            | 
+0x520:                      | .align 8
+                            | # Run time stack
+0x520: 0000000000000000     | 	.quad 0
+0x528: 0000000000000000     | 	.quad 0
+0x530: 0000000000000000     | 	.quad 0
+0x538: 0000000000000000     | 	.quad 0
+0x540: 0000000000000000     | 	.quad 0
+0x548: 0000000000000000     | 	.quad 0
+0x550: 0000000000000000     | 	.quad 0
+0x558: 0000000000000000     | 	.quad 0
+0x560: 0000000000000000     | 	.quad 0
+0x568: 0000000000000000     | 	.quad 0
+0x570: 0000000000000000     | 	.quad 0
+0x578: 0000000000000000     | 	.quad 0
+0x580: 0000000000000000     | 	.quad 0
+0x588: 0000000000000000     | 	.quad 0
+0x590: 0000000000000000     | 	.quad 0
+0x598: 0000000000000000     | 	.quad 0
+                            | 
+0x5a0:                      | Stack:

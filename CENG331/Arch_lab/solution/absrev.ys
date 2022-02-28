@@ -1,0 +1,228 @@
+#/* $begin absrev-ys */
+##################################################################
+# absrev.ys - Reverse a src block of len words to dst.
+# Return the sum of absolute values of words contained in src.
+#
+# Include your name and ID here.
+###################################
+## Student Name:Ersel Hengirmen  ##
+## Student ID:2468015            ##
+###################################
+# Describe how and why you modified the baseline code.
+##################################################################
+# (17.83->17.46)its not really important since its constant, adding rcx 3 times with itself instead of adding rdx 8 times improved my slution from 17.83 to 17.46
+# (17.46->17.38)combining dst-1 using leaq
+# (17.38->15.53)instaed of assigning 1 and 8 to temporary registers every time I put them once at the start which decreased 2 instruction usage inside the loop and
+# (15.53->15.46)jmping to check directly instead of done which could save some predictions
+# (15.53->14.46)I put nops between %r10 memory operations and found out that there was exactly one instruction worth of operations that can be done so I put len calculation between them
+# (14.46->14.31)Just realized I could use leaq instead of assigning constant values to registers which also emptied 2 of my registers for use
+# Note1: started thinking about loop unrolling with 4 regs and checked the simulator and pipe-full-hcl it turns out that prediction model directly takes jump address so I need to decrease any conditional jump
+# Note2: 2 instructions get discarded after a failed prediction also rmmov abd Ipush can create empty cycles so be careful
+# (14.31->12.70)used sub and cmov to create a 4 instruction absval creation with no jumps
+# (12.70->11.52)used loop unrolling with 4 using almost every register but I realized I can use 2 registers for dstrev and src
+# Changed to a better model(using only 3 registers to calculate absval and updating rdi(src) and rcx(dst_rev)
+#       This works at the same speed and I use only these 3 registers. It doesnt matter how many unrollings I do 
+# (11.52->10.99) changed to 6 element loop unrolling( 6 was the best between 2<->8)
+# (10.99->9.60) I Just remembered I could use constant values with mr rm movs (How can someone drive himself crazy) so there are 2 less address instructions for every element in loop
+# Note3: [6 element->9.60] [7 element->9.61] [8 element->9.65] 
+# (9.60->9.66) since there was at most 5 elements left I tried using loop unrolling with 2 element loop
+#       This increased the computation but I can just remove the last iteration and remove its unnecassary calculations 
+#       which should give me more than enough improvements since deleting something outside the loop was giving about %13
+# (9.66->9.31) adding the last iteration outside the loop worked its magic but even though I deleted 7 instructions it only decreased by .35.
+#       Even though the jmp instruction here has more probability of misspredicting it should still have given more
+# (9.31->9.03) Sooooo I realized that using a second unrolling loop was unnecassary instead I just unrolled the loop into a geometrically decreasing sized groups
+#       Also since checking geometrically should be the choice I increased elemtn count per loop to 8 because the cost difference is too little
+# Any more work will not get me to learn anything so lets stop
+#
+# Thx for this wonderful homework it was hard it was quite fun
+##################################################################
+# Do not modify this portion
+# Function prologue.
+# %rdi = src, %rsi = dst, %rdx = len
+absrev:
+##################################################################
+# You can modify this portion
+    # Loop header
+    xorq %rax,%rax    	# sum = 0;
+    
+    # all this for dst_rev = dst + len - 1
+    rrmovq %rdx, %rcx    
+    leaq -8(%rsi), %r8  # combining dst-1 using leaq(17.46->17.38)
+    addq %rcx, %rcx
+    addq %rcx, %rcx
+    addq %rcx, %rcx     # its not really important since its constant adding rcx 3 times instead of adding rdx 8 times improved my slution from 17.83 to 17.46
+    addq %r8, %rcx      # dst_rev = dst + len - 1 in adres;
+
+
+
+
+    ###### those that can be used #########
+    #
+    # rdi,rcx           src,dstrev
+    #
+    # r8,r9,r10      r12,r13,r14
+    #
+    # rax rdx        sumpos/len
+    #
+    # rsi,r11           temp vals
+    #    
+    # rbp,rbx
+    #######################################
+
+    jmp ErselCheck
+
+
+ErselLoop:
+    mrmovq (%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, (%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+    mrmovq $8(%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, $-8(%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+    mrmovq $16(%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, $-16(%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+    mrmovq $24(%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, $-24(%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+    mrmovq $32(%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, $-32(%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+    mrmovq $40(%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, $-40(%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+    mrmovq $48(%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, $-48(%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+    mrmovq $56(%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, $-56(%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+    
+
+
+    leaq $64(%rdi),%rdi     # loop unrolling 4
+    leaq $-64(%rcx),%rcx     # loop unrolling 4
+    leaq $-8(%rdx),%rdx     # loop unrolling 4
+ErselCheck:
+    icmpq $7,%rdx    	    # len > 0?
+    jg ErselLoop            # if so, goto Loop:
+
+
+
+
+
+
+
+    icmpq $4,%rdx
+    jl checkfor2
+
+    mrmovq (%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, (%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+    mrmovq $8(%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, $-8(%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+    mrmovq $16(%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, $-16(%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+    mrmovq $24(%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, $-24(%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+    leaq $32(%rdi),%rdi     # loop unrolling 4
+    leaq $-32(%rcx),%rcx     # loop unrolling 4
+    leaq $-4(%rdx),%rdx     # loop unrolling 4
+
+    
+checkfor2:
+    icmpq $2,%rdx
+    jl checkforLast
+
+    mrmovq (%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, (%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+    mrmovq $8(%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, $-8(%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+    leaq $16(%rdi),%rdi     # loop unrolling 4
+    leaq $-16(%rcx),%rcx     # loop unrolling 4
+    leaq $-2(%rdx),%rdx     # loop unrolling 4
+
+
+checkforLast:
+    icmpq $1,%rdx
+    jl Done
+
+    mrmovq (%rdi), %rsi     # read 1st src
+    irmovq $0, %r11      
+    subq %rsi, %r11      
+    rmmovq %rsi, (%rcx)     # write 1st to dst_rev
+    cmovl %rsi, %r11   
+    addq %r11, %rax      # sum+=absval calculation with 4 instructions
+
+
+
+##################################################################
+# Do not modify the following section of code
+# Function epilogue.
+Done:
+    ret
+##################################################################
+# Keep the following label at the end of your function
+End:
+#/* $end absrev-ys */
+

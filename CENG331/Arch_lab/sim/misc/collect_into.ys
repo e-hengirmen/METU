@@ -1,0 +1,132 @@
+###################################
+## Student Name:Ersel Hengirmen  ##
+## Student ID:2468015            ##
+###################################
+.pos 0
+    irmovq stack, %rsp
+    irmovq root, %rdi
+    irmovq array, %rsi
+    irmovq 8, %rdx       #number of elements
+    call collect_into
+    halt
+
+
+
+collect_into:
+    andq %rdi,%rdi
+    je done1         #if !root jump
+    irmovq 0,%r11
+    subq %rdx,%r11
+    jge done1        # if array_len <= 0 jmp
+
+    pushq %rdi
+    pushq %rsi
+    pushq %rdx
+    mrmovq 8(%rdi),%rdi
+    call collect_into
+    rrmovq %rax,%rcx    ### rcx is left_len ###
+    rrmovq %rax,%r11    #temp for compare
+    popq %rdx
+    popq %rsi
+    popq %rdi
+
+    subq %rdx,%r11
+    je done2
+
+    irmovq 1,%r10       # will be used later
+
+    rrmovq %rax,%r11    # %r11=left_len
+    addq %r11,%r11
+    addq %r11,%r11
+    addq %r11,%r11      # %r11=8*left_len
+    mrmovq (%rdi),%r9   # %r9=root->value
+    addq %rsi,%r11
+    rmmovq %r9,(%r11)   # array[left_len] = root->value;
+    
+    addq %r10,%rcx          #rcx=lef_len+1
+    rrmovq %rcx,%r8         #temp for rsi calculation
+    pushq %rcx
+    addq %r8,%r8
+    addq %r8,%r8
+    addq %r8,%r8            #%r8=8*(left_len+1)
+    addq %r8,%rsi           #2nd arg=array + left_len + 1
+    subq %rcx,%rdx          #3rd arg=array_len-left_len-1
+    mrmovq 16(%rdi),%rdi    #1st arg=root->right
+    call collect_into
+    popq %rcx
+    addq %rcx,%rax
+    ret
+
+done1:
+    irmovq 0,%rax
+    ret
+done2:
+    rrmovq %rcx,%rax
+    ret
+
+
+
+
+
+
+
+.pos 0x200
+root:
+    .quad 17
+    .quad node6
+    .quad node24
+node6:
+    .quad 6
+    .quad node4
+    .quad node11
+node4:
+    .quad 4
+    .quad node3
+    .quad node5
+node3:
+    .quad 3
+    .quad 0
+    .quad 0
+node5:
+    .quad 5
+    .quad 0
+    .quad 0
+node11:
+    .quad 11
+    .quad node8
+    .quad 0
+node8:
+    .quad 8
+    .quad 0
+    .quad 0
+node24:
+    .quad 24
+    .quad node19
+    .quad node40
+node19:
+    .quad 19
+    .quad 0
+    .quad 0
+node40:
+    .quad 40
+    .quad 0
+    .quad node52
+node52:
+    .quad 52
+    .quad 0
+    .quad 0
+
+.pos 0x400
+array:
+    .quad 0
+    .quad 0
+    .quad 0
+    .quad 0
+    .quad 0
+    .quad 0
+    .quad 0
+    .quad 0
+
+
+.pos 0x800
+stack:

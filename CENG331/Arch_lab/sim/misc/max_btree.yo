@@ -1,0 +1,87 @@
+                            | ###################################
+                            | ## Student Name:Ersel Hengirmen  ##
+                            | ## Student ID:2468015            ##
+                            | ###################################
+0x000:                      | .pos 0
+0x000: 30f40008000000000000 |     irmovq stack, %rsp
+0x00a: 30f70002000000000000 |     irmovq root, %rdi
+0x014: 801e00000000000000   |     call max_btree
+0x01d: 00                   |     halt
+                            | 
+0x01e:                      | max_btree:
+0x01e: 30f00000000000000080 |     irmovq 0x8000000000000000,%rax      # maximum pos long
+0x028: 6277                 |     andq %rdi,%rdi
+0x02a: 738300000000000000   |     je done                 # initial if
+                            | 
+0x033: 50070000000000000000 |     mrmovq (%rdi),%rax      # max=root->value
+                            | 
+0x03d: a07f                 |     pushq %rdi
+0x03f: a00f                 |     pushq %rax
+0x041: 50770800000000000000 |     mrmovq 8(%rdi),%rdi
+0x04b: 801e00000000000000   |     call max_btree
+0x054: 2006                 |     rrmovq %rax,%rsi        # rsi=candidate
+0x056: 2002                 |     rrmovq %rax,%rdx        # for comparison subtraction
+0x058: b00f                 |     popq %rax
+0x05a: b07f                 |     popq %rdi
+0x05c: 6102                 |     subq %rax,%rdx          #rdx>rax candidate>max
+0x05e: 2660                 |     cmovg %rsi,%rax
+                            | 
+0x060: a07f                 |     pushq %rdi
+0x062: a00f                 |     pushq %rax
+0x064: 50771000000000000000 |     mrmovq 16(%rdi),%rdi
+0x06e: 801e00000000000000   |     call max_btree
+0x077: 2006                 |     rrmovq %rax,%rsi        # rsi=candidate
+0x079: 2002                 |     rrmovq %rax,%rdx        # for comparison subtraction
+0x07b: b00f                 |     popq %rax
+0x07d: b07f                 |     popq %rdi
+0x07f: 6102                 |     subq %rax,%rdx          #rdx>rax candidate>max
+0x081: 2660                 |     cmovg %rsi,%rax
+                            | 
+                            | 
+0x083:                      | done:
+0x083: 90                   |     ret
+                            | 
+                            | 
+                            | 
+0x200:                      | .pos 0x200
+0x200:                      | root:
+0x200: 0500000000000000     |     .quad 5
+0x208: 1802000000000000     |     .quad node7
+0x210: 7802000000000000     |     .quad node12
+0x218:                      | node7:
+0x218: 0700000000000000     |     .quad 7
+0x220: 3002000000000000     |     .quad node25
+0x228: 4802000000000000     |     .quad node905
+0x230:                      | node25:
+0x230: 1900000000000000     |     .quad 25
+0x238: 0000000000000000     |     .quad 0
+0x240: 0000000000000000     |     .quad 0
+0x248:                      | node905:
+0x248: 8903000000000000     |     .quad 905
+0x250: 6002000000000000     |     .quad nodem1
+0x258: 0000000000000000     |     .quad 0
+0x260:                      | nodem1:
+0x260: ffffffffffffffff     |     .quad -1
+0x268: 0000000000000000     |     .quad 0
+0x270: 0000000000000000     |     .quad 0
+0x278:                      | node12:
+0x278: 0c00000000000000     |     .quad 12
+0x280: 9002000000000000     |     .quad node219
+0x288: a802000000000000     |     .quad nodem10
+0x290:                      | node219:
+0x290: db00000000000000     |     .quad 219
+0x298: 0000000000000000     |     .quad 0
+0x2a0: 0000000000000000     |     .quad 0
+0x2a8:                      | nodem10:
+0x2a8: f6ffffffffffffff     |     .quad -10
+0x2b0: 0000000000000000     |     .quad 0
+0x2b8: c002000000000000     |     .quad node331
+0x2c0:                      | node331:
+0x2c0: 4b01000000000000     |     .quad 331
+0x2c8: 0000000000000000     |     .quad 0
+0x2d0: 0000000000000000     |     .quad 0
+                            | 
+                            | 
+                            | 
+0x800:                      | .pos 0x800
+0x800:                      | stack:

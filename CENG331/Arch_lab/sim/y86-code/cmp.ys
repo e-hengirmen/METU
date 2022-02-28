@@ -1,0 +1,16 @@
+.pos 0
+    irmovq $8, %rbx
+    icmpq $1, %rbx
+    jg Good
+    irmovq $0xdead, %rax
+    halt
+Good:
+
+    irmovq $100, %rdx
+    icmpq $110, %rdx
+    jl Good2
+    irmovq $0xdead, %rax
+    halt
+Good2:
+    irmovq $0xbeef, %rax
+    halt

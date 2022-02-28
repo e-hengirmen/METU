@@ -1,0 +1,9 @@
+.pos 0
+    xorq %rax, %rax
+    leaq 0x10(%rax), %rax
+    leaq 0x20(%rax), %rax
+    leaq 0x30(%rax), %rax
+    leaq 0x40(%rax), %rax
+    leaq 0x10(%rax), %rbx
+    leaq 0x10(%rbx), %rcx
+    halt
