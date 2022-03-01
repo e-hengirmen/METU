@@ -97,4 +97,4 @@ _Middle East Technical University CENG **Data Management And File Structures** c
 
 **Instructor:** İsmail Sengör Altıngövde, Pelin Angın, Pınar Karagöz
 ### Includes
-* Take Home Exam submissions. (written in Java)
+* Programming Assignment submissions. (written in Java)
